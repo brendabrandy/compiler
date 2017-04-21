@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "quads.h"
+#include "flags.h"
 // are we assuming the user declares all vars first?
 // how to determine padding?
 // can we just print to stdout?
@@ -21,10 +22,14 @@ void inst_func_prologue(){
 }
 
 // generates assembly for branching
-void inst_jump(int opcode, struct bblock* false_arm, struct bblock* true_arm){
+void inst_jump(int opcode, char* false_inst, char* true_inst, struct bblock* false_arm, struct bblock* true_arm){
 	switch(opcode){
 		case QUAD_BR:
-			fprintf(stdout, "\tjmp\t.BB%d.%d\n", false_arm->fn_count, false_arm->bb_count);
+			fprintf(stdout, "\t%s\t.BB%d.%d\n", false_inst, false_arm->fn_count, false_arm->bb_count);
+			break;
+		default:
+			fprintf(stdout, "\t%s\t.BB%d.%d\n", false_inst, false_arm->fn_count, false_arm->bb_count);
+			fprintf(stdout, "\t%s\t.BB%d.%d\n", true_inst, true_arm->fn_count, true_arm->bb_count);
 			break;
 	};
 }

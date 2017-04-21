@@ -8,11 +8,11 @@ General expression of the quad looks like this:
 
 | QUAD | QUAD CODE  | ARG1               | ARG2     | DST  | NOTE                            | DONE? |
 |------|------------|--------------------|----------|------|---------------------------------|-------|
-|BRLT  |QUAD\_BRLT  | false arm          | true arm | NULL | branch if less than             |N      |
-|BREQ  |QUAD\_BREQ  | false arm          | true arm | NULL | branch if equal to              |N      |
-|BRGT  |QUAD\_BRGT  | false arm          | true arm | NULL | branch if greater than          |N      |
-|BRLE  |QUAD\_BRLE  | false arm          | true arm | NULL | branch if less or equal to      |N      |
-|BRGE  |QUAD\_BRGE  | false arm          | true arm | NULL | branch if greater or equal to   |N      |
+|BRLT  |QUAD\_BRLT  | false arm          | true arm | NULL | branch if less than             |Y      |
+|BREQ  |QUAD\_BREQ  | false arm          | true arm | NULL | branch if equal to              |Y      |
+|BRGT  |QUAD\_BRGT  | false arm          | true arm | NULL | branch if greater than          |Y      |
+|BRLE  |QUAD\_BRLE  | false arm          | true arm | NULL | branch if less or equal to      |Y      |
+|BRGE  |QUAD\_BRGE  | false arm          | true arm | NULL | branch if greater or equal to   |Y      |
 |BR    |QUAD\_BR    | branch destination | NULL     | NULL | unconditional branch            |Y      |
 |ADD   |E\_ADD      | src1               | src2     | dst  | dst = src1 + src2               |N      |
 |MINUS |E\_MINUS    | src1               | src2     | dst  | dst = src1 - src2               |N      |

@@ -1,7 +1,7 @@
-#include "quads.h"
 #include "flags.h"
 #include "inst.h"
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 // Do i need to keep a master list of quads? YES
 // How do we keep track of temporary values, are we going to implement a global counter to count how many has been generated? keep a master list of temporary nodes and let the quads point to that?
@@ -633,11 +633,15 @@ void print_bb(struct bblock* bb){
     struct quad* my_quad;
     struct bblock* brancher = NULL;
     my_bb = bb;
+	char* bname;
+	bname = (char*) malloc(sizeof(char)*1024);
     while(my_bb != NULL){
         my_quad = my_bb->list_of_quads;
         if (my_bb->visited != 1){
             my_bb->visited = 1;
-            fprintf(stderr,".BB%d.%d:\n", my_bb->fn_count, my_bb->bb_count);
+			sprintf(bname, ".BB%d.%d", my_bb->fn_count, my_bb->bb_count);
+            fprintf(stderr,"%s:\n", bname);
+			inst_label(bname);
             while(my_quad != NULL){
 			    if (my_quad->opcode >= QUAD_BRLT && my_quad->opcode <= QUAD_BRGE || 
                     my_quad->opcode == QUAD_BR){
@@ -678,13 +682,34 @@ void print_bb(struct bblock* bb){
 struct bblock* print_branch(struct quad* quad, struct bblock* bblock){
 	fprintf(stderr,"\t");
 	switch(quad->opcode){
-		case QUAD_BRLT:	fprintf(stderr,"BRLT");		break;
-        case QUAD_BREQ: fprintf(stderr,"BREQ");     break;
-        case QUAD_BRNEQ: fprintf(stderr,"BRNEQ");   break;
-        case QUAD_BRGT: fprintf(stderr,"BRGT");     break;
-        case QUAD_BRLE: fprintf(stderr,"BRLE"); break;
-        case QUAD_BRGE: fprintf(stderr,"BRGE"); break;
-        case QUAD_BR:   fprintf(stderr,"BR");       break;
+		case QUAD_BRLT:	
+			fprintf(stderr,"BRLT");		
+			inst_jump(QUAD_BRLT, "jnl", "jl", bblock->f_block, bblock->t_block);
+			break;
+        case QUAD_BREQ: 
+			fprintf(stderr,"BREQ");   
+			inst_jump(QUAD_BREQ, "jne", "je", bblock->f_block, bblock->t_block);  
+			break;
+        case QUAD_BRNEQ: 
+			fprintf(stderr,"BRNEQ"); 
+			inst_jump(QUAD_BRNEQ, "je", "jne", bblock->f_block, bblock->t_block);  
+			break;
+        case QUAD_BRGT: 
+			fprintf(stderr,"BRGT");
+			inst_jump(QUAD_BRGT, "jng", "jg", bblock->f_block, bblock->t_block);     
+			break;
+        case QUAD_BRLE: 
+			fprintf(stderr,"BRLE");
+			inst_jump(QUAD_BRLE, "jnle", "jle", bblock->f_block, bblock->t_block); 
+			break;
+        case QUAD_BRGE: 
+			fprintf(stderr,"BRGE"); 
+			inst_jump(QUAD_BRGE, "jnge", "jge", bblock->f_block , bblock->t_block);
+			break;
+        case QUAD_BR:   
+			fprintf(stderr,"BR");
+			inst_jump(QUAD_BR, "jmp", NULL, bblock->s_block, NULL);       
+			break;
 	}
 	fprintf(stderr,"\t");
     if (quad->opcode >= QUAD_BRLT && quad->opcode <= QUAD_BRGE){
@@ -741,6 +766,7 @@ void print_quad(struct quad* curr_quad){
         case QUAD_MOV: fprintf(stderr,"MOV");     break;
         case QUAD_CMP: fprintf(stderr,"CMP");     break;
         case QUAD_RETURN: 
+			fprintf(stderr,"RETURN");
 			inst_return(NULL);
 			break;
 		case QUAD_CALL:	fprintf(stderr,"CALL");	  break;
