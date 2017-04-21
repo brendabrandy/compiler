@@ -27,11 +27,11 @@ General expression of the quad looks like this:
 |GTEQ  |E\_GTEQ     | src1               | src2     | dst  | dst = src1 >= src2              |N      |
 |EQEQ  |E\_EQEQ     | src1               | src2     | dst  | dst = src1 == src2              |N      |
 |NOTEQ |E\_NOTEQ    | src1               | src2     | dst  | dst = src1 != src2              |N      |
-|LOGOR |E\_LOGOR    | src1               | src2     | dst  | dst = src1 || src2 (logical)    |N      |
+|LOGOR |E\_LOGOR    | src1               | src2     | dst  | dst = src1 \|\| src2 (logical)    |N      |
 |LOGAND|E\_LOGAND   | src1               | src2     | dst  | dst = src1 && src2 (logical)    |N      |
 |XOR   |E\_XOR      | src1               | src2     | dst  | dst = src1 ^ src2               |N      |
 |AND   |E\_AND      | src1               | src2     | dst  | dst = src1 & src2 (bitwise)     |N      |
-|OR    |E\_OR       | src1               | src2     | dst  | dst = src1 | src2 (bitwise)     |N      |
+|OR    |E\_OR       | src1               | src2     | dst  | dst = src1 \| src2 (bitwise)     |N      |
 |BNOT  |E\_BITNOT   | src1               | NULL     | dst  | dst = ~src1       (bitwise)     |N      |
 |UMINUS|E\_UMINUS   | src1               | NULL     | dst  | dst = -src1                     |N      |
 |UPLUS |E\_UPLUS    | src1               | NULL     | dst  | dst = +src1                     |N      |
