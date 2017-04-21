@@ -485,7 +485,7 @@ bitwise_xor_expr conditional_body
     compound_stmt:    '{'{enter_block($<node>0, 0);} decl_or_stmt_list '}' { print_func_dump(0, $3, $<node>0);
                                                                              if (curr_scope->scope_num == S_FUNCTION)
                                                                                 fn_counter += 1;
-                                                                             generate_quads($3, curr_scope->scope_num);
+                                                                             generate_quads($3, curr_scope->scope_num, $<node>0);
                                                                              leave_block();
                                                                              $$ = $3;}
                     | '{' '}'   {}

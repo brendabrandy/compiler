@@ -26,7 +26,7 @@ struct node* gen_return(struct node* return_node);
 struct bblock* print_branch(struct quad* quad, struct bblock* block);
 struct node* ast_typeof(struct node* node);
 struct bblock* new_bb();
-void generate_quads(struct node* stmt, int scope);
+void generate_quads(struct node* stmt, int scope, struct node* ident);
 void gen_quads(struct node* stmt, struct bblock* break_node, struct bblock* cont_node);
 struct node* gen_assign(struct node* node);
 struct node* gen_lvalue(struct node* node, int *mode);

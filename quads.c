@@ -1,6 +1,6 @@
 #include "quads.h"
 #include "flags.h"
-#include "ast.h"
+#include "inst.h"
 #include <string.h>
 #include <stdlib.h>
 // Do i need to keep a master list of quads? YES
@@ -21,11 +21,13 @@
 
 struct node* head_temp;
 
-void generate_quads(struct node* stmt, int scope){
+void generate_quads(struct node* stmt, int scope, struct node* ident){
     struct bblock* head_bb;
     if (scope != S_FUNCTION){
         return;
     }
+	inst_label(ident->ast_node.fn_node.node.name);
+	inst_func_prologue();	
     bb_counter = 0;
     cur_bb = new_bb();
     head_bb = cur_bb;
@@ -738,7 +740,9 @@ void print_quad(struct quad* curr_quad){
         case QUAD_LEA: fprintf(stderr,"LEA");     break;
         case QUAD_MOV: fprintf(stderr,"MOV");     break;
         case QUAD_CMP: fprintf(stderr,"CMP");     break;
-        case QUAD_RETURN: fprintf(stderr,"RETURN"); break;
+        case QUAD_RETURN: 
+			inst_return(NULL);
+			break;
 		case QUAD_CALL:	fprintf(stderr,"CALL");	  break;
 		case QUAD_ARGS: fprintf(stderr,"ARG");	  break;
         case QUAD_NOT:  fprintf(stderr,"NOT");    break;

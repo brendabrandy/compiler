@@ -3030,7 +3030,7 @@ yyreduce:
     { print_func_dump(0, (yyvsp[-1].node), (yyvsp[-4].node));
                                                                              if (curr_scope->scope_num == S_FUNCTION)
                                                                                 fn_counter += 1;
-                                                                             generate_quads((yyvsp[-1].node), curr_scope->scope_num);
+                                                                             generate_quads((yyvsp[-1].node), curr_scope->scope_num, (yyvsp[-4].node));
                                                                              leave_block();
                                                                              (yyval.node) = (yyvsp[-1].node);}
 #line 3037 "parse.tab.c" /* yacc.c:1646  */

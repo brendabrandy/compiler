@@ -1,0 +1,49 @@
+AST Dump for function c
+LIST(
+ ASSIGNMENT
+  stab_var name=b def @test.c:2
+  BINARY OP +
+   UNARY OP ADDRESSOF
+    stab_var name=a def @test.c:2
+   CONSTANT: (type=int) 4
+ ASSIGNMENT
+  DEREF
+   stab_var name=b def @test.c:2
+  BINARY OP +
+   stab_var name=a def @test.c:2
+   CONSTANT: (type=int) 4
+ RETURN:
+)
+.BB1.1:
+	%T00001 = LEA	a{lvar}
+	%T00002 = MUL	4	,4
+	b{lvar} = ADD	%T00001	,%T00002
+	%T00003 = ADD	a{lvar}	,4
+	STORE	[%T00003]	,b{lvar}
+	
+AST Dump for function h
+LIST(
+ ASSIGNMENT
+  stab_var name=v def @test.c:8
+  DEREF
+   BINARY OP +
+    DEREF
+     BINARY OP +
+      DEREF
+       BINARY OP +
+        stab_var name=d def @test.c:8
+        stab_var name=i def @test.c:8
+      stab_var name=j def @test.c:8
+    stab_var name=k def @test.c:8
+ RETURN:
+)
+.BB2.1:
+	%T00004 = LEA	d{lvar}
+	%T00005 = MUL	2400	,i{lvar}
+	%T00006 = ADD	%T00004	,%T00005
+	%T00007 = MUL	120	,j{lvar}
+	%T00008 = ADD	%T00006	,%T00007
+	%T00009 = MUL	4	,k{lvar}
+	%T00010 = ADD	%T00008	,%T00009
+	v{lvar} = LOAD	[%T00010]
+	
