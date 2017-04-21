@@ -128,6 +128,7 @@ struct IDENT_BIT_FIELD{
 struct TEMP_NODE{
     char* name;
 	struct node* ary_temp;
+    int offset;
 };
 
 struct EXPR_BINOP_NODE{
