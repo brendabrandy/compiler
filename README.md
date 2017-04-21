@@ -1,6 +1,12 @@
 # compiler
 
-# QUADS
+# To do
+
+* support static, extern, global and local variables
+* support strings, ints, pointers and chars
+
+
+# Quads
 
 General expression of the quad looks like this:
 
