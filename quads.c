@@ -744,7 +744,7 @@ void print_quad(struct quad* curr_quad){
         case QUAD_NOT:  fprintf(stderr,"NOT");    break;
     }
     if (curr_quad->src1 != NULL){
-		if (curr_quad->opcode == QUAD_LOAD){
+		if (curr_quad->opcode == QUAD_LOAD || curr_quad->opcode == QUAD_STORE){
 			fprintf(stderr,"\t[");
 			print_node(curr_quad->src1);
 			fprintf(stderr,"]");
