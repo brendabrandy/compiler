@@ -781,13 +781,25 @@ void print_quad(struct quad* curr_quad){
             fprintf(stderr,"OR");
             inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
             break;
-        case E_BITNOT: fprintf(stderr,"BNOT");    break;
-        case E_UMINUS: fprintf(stderr,"UMIN");    break;
-        case E_UPLUS: fprintf(stderr,"UPLUS");    break;
+        case E_BITNOT: 
+            fprintf(stderr,"BNOT");
+            inst_one_operand(curr_quad->opcode, curr_quad->result, curr_quad->src1);
+            break;
+        case E_UMINUS:
+            fprintf(stderr,"UMIN");
+            inst_one_operand(curr_quad->opcode, curr_quad->result, curr_quad->src1);
+            break;
+        case E_UPLUS: 
+            fprintf(stderr,"UPLUS"); 
+            inst_mov(curr_quad->opcode, curr_quad->result, curr_quad->src1);   
+            break;
         case QUAD_LOAD: fprintf(stderr,"LOAD");   break;
         case QUAD_STORE: fprintf(stderr,"STORE"); break;
         case QUAD_LEA: fprintf(stderr,"LEA");     break;
-        case QUAD_MOV: fprintf(stderr,"MOV");     break;
+        case QUAD_MOV:
+            fprintf(stderr,"MOV");
+            inst_mov(curr_quad->opcode, curr_quad->result, curr_quad->src1);
+            break;
         case QUAD_CMP: fprintf(stderr,"CMP");     break;
         case QUAD_RETURN: 
 			fprintf(stderr,"RETURN");

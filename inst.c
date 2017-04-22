@@ -60,6 +60,37 @@ void inst_func_prologue(){
 	return;
 }
 
+void inst_mov(int opcode, struct node* res, struct node* src1){
+    fprintf(stdout,"\tmovl\t");
+    inst_print_vars(src1);
+    fprintf(stdout,", ");
+    inst_print_vars(res);
+    fprintf(stdout,"\n");
+}
+
+// generates assembly for quads expression like res = OPCODE src1
+// general strategy will be
+// mov src1, %ecx
+// OPCODE %ecx
+// mov %ecx, res
+void inst_one_operand(int opcode, struct node* res, struct node* src1){
+    fprintf(stdout,"\tmovl\t");
+    inst_print_vars(src1);
+    fprintf(stdout,", %%ecx\n\t");
+    switch(opcode){
+        case E_BITNOT:
+            fprintf(stdout,"notl"); 
+            break;
+        case E_UMINUS:
+            fprintf(stdout,"negl");
+            break;
+    }
+    fprintf(stdout,"\t%%ecx\n\tmovl\t%%ecx, ");
+    inst_print_vars(res);
+    fprintf(stdout,"\n");
+    
+}
+
 // generates assembly for quads expression like res = OPCODE src1, src2
 // general strategy will be
 // mov src2, %ecx
