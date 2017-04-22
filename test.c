@@ -5,7 +5,7 @@ int main(){
 	static int j;
     int k;
 	a = a+b;
-    k = a+b;
+    k = a+j;
 }
 
 int g(){

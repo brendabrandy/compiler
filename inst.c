@@ -73,7 +73,26 @@ void inst_two_operands(int opcode, struct node* res, struct node* src1, struct n
     // print opcode
     switch(opcode){
         case E_ADD:
-           fprintf(stdout,"addl");
+            fprintf(stdout,"addl");
+            break;
+        case E_MINUS:
+            fprintf(stdout,"subl");
+            break;
+        case E_SHL:
+            fprintf(stdout,"sall");
+            break;
+        case E_SHR:
+            fprintf(stdout,"shrl");
+            break;
+        case E_XOR:
+            fprintf(stdout,"xorl");
+            break;
+        case E_AND:
+            fprintf(stdout,"andl");
+            break;
+        case E_OR:
+            fprintf(stdout,"orl");
+            break;
     }
     // print src1, %ecx
     fprintf(stdout,"\t");

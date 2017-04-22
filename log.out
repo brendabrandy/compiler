@@ -1,28 +1,33 @@
-AST Dump for function main
+AST Dump for function f
 LIST(
  ASSIGNMENT
-  stab_var name=a def @test.c:1
-  BINARY OP +
-   stab_var name=a def @test.c:1
-   stab_var name=b def @test.c:2
+  stab_var name=a def @test5.c:4
+  FNCALL, 2 arguments
+   stab_fn name=g def @test5.c:1
+  ARGS
+    BINARY OP +
+     stab_var name=b def @test5.c:4
+     CONSTANT: (type=int) 3
+    CONSTANT: (type=int) 5
  ASSIGNMENT
-  stab_var name=k def @test.c:6
-  BINARY OP +
-   stab_var name=a def @test.c:1
-   stab_var name=b def @test.c:2
+  stab_var name=c def @test5.c:4
+  BINARY OP <
+   stab_var name=a def @test5.c:4
+   stab_var name=b def @test5.c:4
  RETURN:
 )
 .BB1.1:
-	a{global} = ADD	a{global}	,b{global}
-	k{lvar} = ADD	a{global}	,b{global}
+	%T00001 = ADD	b{lvar}	,3
+	ARG	1	,%T00001
+	ARG	2	,5
+	a{lvar} = CALL	$g	,2
+	CMP	a{lvar}	,b{lvar}
+	BRLT	.BB1.3, .BB1.2
+.BB1.2:
+	c{lvar} = MOV	1
+	BR	.BB1.4
+.BB1.4:
 	RETURN
-AST Dump for function g
-LIST(
- ASSIGNMENT
-  stab_var name=j def @test.c:12
-  CONSTANT: (type=int) 2
- RETURN:
-)
-.BB2.1:
-	j.1{static} = MOV	2
-	RETURN
+.BB1.3:
+	c{lvar} = MOV	0
+	BR	.BB1.4

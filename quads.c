@@ -746,14 +746,22 @@ void print_quad(struct quad* curr_quad){
     switch(curr_quad->opcode){
         case E_ADD: 
             fprintf(stderr, "ADD");
-            inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);      
+            inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);             break;
+        case E_MINUS: 
+            fprintf(stderr,"MINUS");    
+            inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
             break;
-        case E_MINUS: fprintf(stderr,"MINUS");    break;
         case E_MUL: fprintf(stderr,"MUL");        break;
         case E_DIV: fprintf(stderr,"DIV");        break;
         case E_MOD: fprintf(stderr,"MOD");        break;
-        case E_SHL: fprintf(stderr,"SHL");        break;
-        case E_SHR: fprintf(stderr,"SHR");        break;
+        case E_SHL: 
+            fprintf(stderr,"SHL");  
+            inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
+            break;
+        case E_SHR: 
+            fprintf(stderr,"SHR");
+            inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
+            break;
         /*case E_LT:  fprintf(stderr,"LT");         break;
         case E_GT:  fprintf(stderr,"GT");         break;
         case E_LTEQ: fprintf(stderr,"LTEQ");      break;
@@ -761,9 +769,18 @@ void print_quad(struct quad* curr_quad){
         case E_NOTEQ: fprintf(stderr,"NOTEQ");    break;
         case E_LOGOR: fprintf(stderr,"LOGOR");    break;
         case E_LOGAND: fprintf(stderr,"LOGAND");  break;*/
-        case E_XOR: fprintf(stderr,"XOR");        break;
-        case E_AND: fprintf(stderr,"AND");        break;
-        case E_OR: fprintf(stderr,"OR");          break;
+        case E_XOR: 
+            fprintf(stderr,"XOR");    
+            inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
+            break;
+        case E_AND: 
+            fprintf(stderr,"AND");
+            inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
+            break;
+        case E_OR: 
+            fprintf(stderr,"OR");
+            inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
+            break;
         case E_BITNOT: fprintf(stderr,"BNOT");    break;
         case E_UMINUS: fprintf(stderr,"UMIN");    break;
         case E_UPLUS: fprintf(stderr,"UPLUS");    break;
