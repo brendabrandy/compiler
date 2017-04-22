@@ -803,7 +803,11 @@ void print_quad(struct quad* curr_quad){
         case QUAD_CMP: fprintf(stderr,"CMP");     break;
         case QUAD_RETURN: 
 			fprintf(stderr,"RETURN");
-			inst_return(NULL);
+			if (curr_quad->src1 == NULL){
+                inst_return(NULL);
+            }else{
+                inst_return(curr_quad->src1);
+            }
 			break;
 		case QUAD_CALL:	fprintf(stderr,"CALL");	  break;
 		case QUAD_ARGS: fprintf(stderr,"ARG");	  break;

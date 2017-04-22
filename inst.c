@@ -175,6 +175,11 @@ void inst_fn_call(struct node* fn_node){
 }
 
 void inst_return(struct node* n){
+    if (n != NULL){
+        fprintf(stdout, "\tmovl\t");
+        inst_print_vars(n);
+        fprintf(stdout,", %%eax\n");
+    }
 	fprintf(stdout,"\tleave\n");
 	fprintf(stdout,"\tret\n");
 	return;

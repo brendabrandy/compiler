@@ -1,49 +1,162 @@
-AST Dump for function c
+AST Dump for function z
 LIST(
  ASSIGNMENT
-  stab_var name=b def @test.c:2
-  BINARY OP +
-   UNARY OP ADDRESSOF
-    stab_var name=a def @test.c:2
-   CONSTANT: (type=int) 4
- ASSIGNMENT
-  DEREF
-   stab_var name=b def @test.c:2
-  BINARY OP +
-   stab_var name=a def @test.c:2
-   CONSTANT: (type=int) 4
+  stab_var name=a def @test4.c:2
+  CONSTANT: (type=int) 1
+ WHILE
+ COND:
+  BINARY OP &&
+   DEREF
+    stab_var name=p def @test4.c:2
+   UNARY OP !
+    stab_var name=p def @test4.c:2
+ BODY:
+  LIST(
+   ASSIGNMENT
+    stab_var name=a def @test4.c:2
+    BINARY OP +
+     stab_var name=a def @test4.c:2
+     CONSTANT: (type=int) 1
+  )
  RETURN:
+  stab_var name=b def @test4.c:2
 )
 .BB1.1:
-	%T00001 = LEA	a{lvar}
-	%T00002 = MUL	4	,4
-	b{lvar} = ADD	%T00001	,%T00002
-	%T00003 = ADD	a{lvar}	,4
-	STORE	[%T00003]	,b{lvar}
-	RETURN
-AST Dump for function h
+	a{lvar} = MOV	1
+	BR	.BB1.2
+.BB1.2:
+	%T00001 = LOAD	[p{lvar}]
+	CMP	%T00001	,0
+	BRGE	.BB1.4, .BB1.5
+.BB1.5:
+	%T00002 = NOT	p{lvar}
+	CMP	%T00002	,0
+	BRLE	.BB1.4, .BB1.3
+.BB1.3:
+	a{lvar} = ADD	a{lvar}	,1
+	BR	.BB1.2
+.BB1.4:
+	RETURN	b{lvar}
+AST Dump for function f
 LIST(
  ASSIGNMENT
-  stab_var name=v def @test.c:8
-  DEREF
-   BINARY OP +
-    DEREF
-     BINARY OP +
-      DEREF
-       BINARY OP +
-        stab_var name=d def @test.c:8
-        stab_var name=i def @test.c:8
-      stab_var name=j def @test.c:8
-    stab_var name=k def @test.c:8
+  stab_var name=c def @test4.c:11
+  CONSTANT: (type=int) 10
+ ASSIGNMENT
+  stab_var name=d def @test4.c:11
+  CONSTANT: (type=int) 20
+ DO
+ BODY:
+  LIST(
+   ASSIGNMENT
+    stab_var name=d def @test4.c:11
+    BINARY OP +
+     stab_var name=d def @test4.c:11
+     stab_var name=c def @test4.c:11
+  )
+ COND:
+  BINARY OP <
+   stab_var name=c def @test4.c:11
+   stab_var name=d def @test4.c:11
  RETURN:
+  CONSTANT: (type=int) 0
 )
 .BB2.1:
-	%T00004 = LEA	d{lvar}
-	%T00005 = MUL	2400	,i{lvar}
-	%T00006 = ADD	%T00004	,%T00005
-	%T00007 = MUL	120	,j{lvar}
-	%T00008 = ADD	%T00006	,%T00007
-	%T00009 = MUL	4	,k{lvar}
-	%T00010 = ADD	%T00008	,%T00009
-	v{lvar} = LOAD	[%T00010]
+	c{lvar} = MOV	10
+	d{lvar} = MOV	20
+	BR	.BB2.2
+.BB2.2:
+	d{lvar} = ADD	d{lvar}	,c{lvar}
+	BR	.BB2.3
+.BB2.3:
+	CMP	c{lvar}	,d{lvar}
+	BRLT	.BB2.4, .BB2.2
+.BB2.4:
+	RETURN	0
+AST Dump for function g
+LIST(
+ FOR
+ INIT:
+  ASSIGNMENT
+   stab_var name=i def @test4.c:21
+   CONSTANT: (type=int) 0
+ COND:
+  BINARY OP <
+   stab_var name=i def @test4.c:21
+   CONSTANT: (type=int) 10
+ INCR:
+  ASSIGNMENT
+   stab_var name=i def @test4.c:21
+   BINARY OP +
+    stab_var name=i def @test4.c:21
+    CONSTANT: (type=int) 1
+ BODY:
+  LIST(
+   ASSIGNMENT
+    stab_var name=j def @test4.c:21
+    BINARY OP +
+     stab_var name=j def @test4.c:21
+     CONSTANT: (type=int) 1
+   IF
+   COND:
+    BINARY OP ==
+     stab_var name=i def @test4.c:21
+     CONSTANT: (type=int) 5
+   BODY:
+    LIST(
+     ASSIGNMENT
+      stab_var name=j def @test4.c:21
+      BINARY OP +
+       stab_var name=j def @test4.c:21
+       CONSTANT: (type=int) 2
+     BREAK
+    )
+   ELSE:
+   IF
+   COND:
+    BINARY OP <
+     stab_var name=i def @test4.c:21
+     CONSTANT: (type=int) 5
+   BODY:
+    CONTINUE
+   ELSE:
+   ASSIGNMENT
+    stab_var name=j def @test4.c:21
+    BINARY OP +
+     stab_var name=j def @test4.c:21
+     CONSTANT: (type=int) 1
+  )
+ ASSIGNMENT
+  stab_var name=i def @test4.c:21
+  BINARY OP +
+   stab_var name=i def @test4.c:21
+   CONSTANT: (type=int) 1
+ RETURN:
+)
+.BB3.1:
+	i{lvar} = MOV	0
+	BR	.BB3.4
+.BB3.4:
+	CMP	i{lvar}	,10
+	BRLT	.BB3.5, .BB3.2
+.BB3.2:
+	j{lvar} = ADD	j{lvar}	,1
+	CMP	i{lvar}	,5
+	BREQ	.BB3.7, .BB3.6
+.BB3.6:
+	j{lvar} = ADD	j{lvar}	,2
+	BR	.BB3.5
+.BB3.5:
+	i{lvar} = ADD	i{lvar}	,1
 	RETURN
+.BB3.7:
+	CMP	i{lvar}	,5
+	BRLT	.BB3.10, .BB3.9
+.BB3.9:
+	BR	.BB3.3
+.BB3.3:
+	i{lvar} = ADD	i{lvar}	,1
+	BR	.BB3.4
+.BB3.10:
+	j{lvar} = ADD	j{lvar}	,1
+	BR	.BB3.3
