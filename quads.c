@@ -744,20 +744,23 @@ void print_quad(struct quad* curr_quad){
     }
     // 2. opcode
     switch(curr_quad->opcode){
-        case E_ADD: fprintf(stderr, "ADD");       break;
+        case E_ADD: 
+            fprintf(stderr, "ADD");
+            inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);      
+            break;
         case E_MINUS: fprintf(stderr,"MINUS");    break;
         case E_MUL: fprintf(stderr,"MUL");        break;
         case E_DIV: fprintf(stderr,"DIV");        break;
         case E_MOD: fprintf(stderr,"MOD");        break;
         case E_SHL: fprintf(stderr,"SHL");        break;
         case E_SHR: fprintf(stderr,"SHR");        break;
-        case E_LT:  fprintf(stderr,"LT");         break;
+        /*case E_LT:  fprintf(stderr,"LT");         break;
         case E_GT:  fprintf(stderr,"GT");         break;
         case E_LTEQ: fprintf(stderr,"LTEQ");      break;
         case E_EQEQ: fprintf(stderr,"EQEQ");      break;
         case E_NOTEQ: fprintf(stderr,"NOTEQ");    break;
         case E_LOGOR: fprintf(stderr,"LOGOR");    break;
-        case E_LOGAND: fprintf(stderr,"LOGAND");  break;
+        case E_LOGAND: fprintf(stderr,"LOGAND");  break;*/
         case E_XOR: fprintf(stderr,"XOR");        break;
         case E_AND: fprintf(stderr,"AND");        break;
         case E_OR: fprintf(stderr,"OR");          break;
@@ -813,7 +816,8 @@ void print_vars(struct node* curr_node){
     }else if (curr_node->ast_node.var_node.stg == T_EXTERN){
         fprintf(stderr,"%s{global}", curr_node->ast_node.var_node.node.name);
     }else if (curr_node->ast_node.var_node.stg == T_STATIC){
-		fprintf(stderr,"%s{static}", curr_node->ast_node.var_node.node.name);
+		fprintf(stderr,"%s.%d{static}", curr_node->ast_node.var_node.node.name, 
+                                        curr_node->ast_node.var_node.static_count);
 	}else{
         fprintf(stderr,"%s{wrong} %d", curr_node->ast_node.var_node.node.name,
                                        curr_node->next->ast_node.var_node.stg);

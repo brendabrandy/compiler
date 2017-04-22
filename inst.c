@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "quads.h"
+#include "inst.h"
 #include "flags.h"
 // are we assuming the user declares all vars first?
 // how to determine padding?
@@ -52,12 +52,58 @@ void inst_func_directive(char* func_name){
 void inst_func_prologue(){
 	fprintf(stdout, "\tpushl\t%%ebp\n");
 	fprintf(stdout, "\tmovl\t%%esp, %%ebp\n");
-    fprintf(stdout, "\tsubl\t$%d,%%esp\n", stack_offset);
+    fprintf(stdout, "\tsubl\t$%d, %%esp\n", stack_offset);
     if (stack_offset %16 != 0){
         int padding = stack_offset%16;
-        fprintf(stdout,"\tsubl\t$%d,%%esp\n", padding);
+        fprintf(stdout,"\tsubl\t$%d, %%esp\n", padding);
     }
 	return;
+}
+
+// generates assembly for quads expression like res = OPCODE src1, src2
+// general strategy will be
+// mov src2, %ecx
+// OPCODE src1, %ecx
+// mov %ecx, res 
+void inst_two_operands(int opcode, struct node* res, struct node* src1, struct node* src2){
+    // print mov src2, %ecx
+    fprintf(stdout,"\tmovl\t");
+    inst_print_vars(src2);
+    fprintf(stdout,", %%ecx\n\t");
+    // print opcode
+    switch(opcode){
+        case E_ADD:
+           fprintf(stdout,"addl");
+    }
+    // print src1, %ecx
+    fprintf(stdout,"\t");
+    inst_print_vars(src1);
+    fprintf(stdout,", %%ecx\n");
+    // print mov %ecx, res
+    fprintf(stdout,"\tmovl\t%%ecx, ");
+    inst_print_vars(res);
+    fprintf(stdout,"\n");
+}
+
+void inst_print_vars(struct node* n){
+    // what if it's an arugment?
+    switch(n->flag){
+        case I_VAR_NODE:
+            // get the offset
+            if (n->ast_node.var_node.stg == T_AUTO)
+                fprintf(stdout,"-$%d(%%ebp)", n->ast_node.var_node.offset);
+            else if (n->ast_node.var_node.stg == T_EXTERN)
+                fprintf(stdout,"%s", n->ast_node.var_node.node.name);
+            else if (n->ast_node.var_node.stg == T_STATIC)
+                fprintf(stdout,"%s.%d", n->ast_node.var_node.node.name, n->ast_node.var_node.static_count);
+            break;
+        case T_TEMP_NODE:
+            fprintf(stdout,"-$%d(%%ebp)", n->ast_node.temp_node.offset);
+            break;
+        case E_CONSTANT:
+            fprintf(stdout,"-$%d", n->ast_node.constant_node.value);
+            break;
+    }
 }
 
 // generates assembly for branching

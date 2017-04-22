@@ -3,6 +3,9 @@
 # To do
 
 * support strings, ints, pointers and chars
+* support arguments
+* support arithmetic operatiosn
+* support loading, storing etc
 
 # Done to-dos
 
@@ -24,7 +27,7 @@ General expression of the quad looks like this:
 |BRLE  |QUAD\_BRLE  | false arm          | true arm | NULL | branch if less or equal to      |Y      |
 |BRGE  |QUAD\_BRGE  | false arm          | true arm | NULL | branch if greater or equal to   |Y      |
 |BR    |QUAD\_BR    | branch destination | NULL     | NULL | unconditional branch            |Y      |
-|ADD   |E\_ADD      | src1               | src2     | dst  | dst = src1 + src2               |N      |
+|ADD   |E\_ADD      | src1               | src2     | dst  | dst = src1 + src2               |Y      |
 |MINUS |E\_MINUS    | src1               | src2     | dst  | dst = src1 - src2               |N      |
 |MUL   |E\_MUL      | src1               | src2     | dst  | dst = src1 * src2               |N      |
 |DIV   |E\_DIV      | src1               | src2     | dst  | dst = src1 / src2               |N      |
