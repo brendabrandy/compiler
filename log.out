@@ -10,3 +10,13 @@ LIST(
 .BB1.1:
 	a{global} = ADD	a{global}	,b{global}
 	RETURN
+AST Dump for function g
+LIST(
+ ASSIGNMENT
+  stab_var name=j def @test.c:10
+  CONSTANT: (type=int) 2
+ RETURN:
+)
+.BB2.1:
+	j{static} = MOV	2
+	RETURN

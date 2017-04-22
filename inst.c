@@ -9,6 +9,8 @@
 // QUES : How do we determine the padding?
 // NOTE : when we say something like int a = 'c' , do we promote char to int?
 
+extern int stack_offset;
+
 // prints the name of the label
 void inst_label(char* name){
 	fprintf(stdout,"%s:\n", name);
@@ -24,8 +26,20 @@ void inst_txt_directive(){
 }
 
 // prints the .comm block for bss block
-void inst_comm_directive(char* name, int size, int alignment){
-	fprintf(stdout,"\t.comm\t%s,%d,%d\n", name, size, alignment);
+void inst_comm_directive(char* name, int size, int alignment, int stat_count){
+    if (stat_count >= 0){
+        fprintf(stdout,"\t.comm\t%s.%d,%d,%d\n", name, stat_count, size, alignment);
+    }else{
+	    fprintf(stdout,"\t.comm\t%s,%d,%d\n", name, size, alignment);
+    }
+}
+
+void inst_local_directive(char* name, int stat_count){
+    if (stat_count >= 0){
+        fprintf(stdout,"\t.local\t%s.%d\n", name, stat_count);
+    }else{
+        fprintf(stdout,"\t.local\t%s\n", name);
+    }
 }
 
 // prints the directives for function
@@ -38,6 +52,11 @@ void inst_func_directive(char* func_name){
 void inst_func_prologue(){
 	fprintf(stdout, "\tpushl\t%%ebp\n");
 	fprintf(stdout, "\tmovl\t%%esp, %%ebp\n");
+    fprintf(stdout, "\tsubl\t$%d,%%esp\n", stack_offset);
+    if (stack_offset %16 != 0){
+        int padding = stack_offset%16;
+        fprintf(stdout,"\tsubl\t$%d,%%esp\n", padding);
+    }
 	return;
 }
 

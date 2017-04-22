@@ -10,9 +10,10 @@
 struct scope_node* curr_scope; // the current scope is a global variable
 extern int line_num;
 int stack_offset;
-int stat_count;
+int static_count;
 char* fname;
-void inst_comm_directive(char* name, int size, int alignment);
+void inst_local_directive(char* directive, int stat_count);
+void inst_comm_directive(char* name, int size, int alignment, int stat_count);
 // creates a symbol table, returns pointer to symbol table
 void create_sym_table(char *name, int num){
     // create head node
@@ -242,13 +243,25 @@ struct node* insert_sym(char* name, int namespace, struct node* new_node, int ne
     if (new_node->flag == I_NODE){
         corrected_node = ident_var_type(new_node, isExtern);
 		if (corrected_node->flag == I_VAR_NODE){
-			corrected_node->ast_node.var_node.offset = stack_offset;
-			s_offset = offset_inc(corrected_node);
-			stack_offset += s_offset;
 			// if it is a global variable
-			if (*isExtern != 1 && curr_scope->scope_num == S_GLOBAL){
-				inst_comm_directive(name, s_offset, s_offset);
-			}
+            s_offset = offset_inc(corrected_node);
+            if (corrected_node->ast_node.var_node.stg == T_STATIC){
+                // if it is a static variable
+                corrected_node->ast_node.var_node.static_count = static_count;
+                static_count += 1; 
+                inst_local_directive(name, corrected_node->ast_node.var_node.static_count);
+                inst_comm_directive(name, s_offset, s_offset, corrected_node->ast_node.var_node.static_count);
+
+            }else if (*isExtern != 1 && corrected_node->ast_node.var_node.stg == T_EXTERN){
+                // if it is a global variable but not an extern global variable
+                corrected_node->ast_node.var_node.static_count = -1;
+				inst_comm_directive(name, s_offset, s_offset, -1);
+			}else{
+                // if it is a local variable, make room for it on the stack
+                corrected_node->ast_node.var_node.static_count = -1;
+                corrected_node->ast_node.var_node.offset = stack_offset;
+			    stack_offset += s_offset;
+            }
 		}
     }else{
         corrected_node = new_node;

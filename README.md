@@ -2,8 +2,11 @@
 
 # To do
 
-* support static, extern, global and local variables
 * support strings, ints, pointers and chars
+
+# Done to-dos
+
+* support static, extern, global and local variables
 * assign an offset to local variables as I go through the stack frame
 * assign an offset to temporary variables as I go through the stack frame
 

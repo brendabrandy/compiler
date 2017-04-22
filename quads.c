@@ -18,7 +18,7 @@
 // ternary operators
 // handling structs / unions
 
-
+extern int stack_offset;
 struct node* head_temp;
 
 void generate_quads(struct node* stmt, int scope, struct node* ident){
@@ -600,6 +600,7 @@ void emit(int opcode, struct node* left, struct node* right, struct node* target
 struct node* new_temporary(){
     struct node* n = (struct node*) malloc(sizeof(struct node));
     n->flag = T_TEMP_NODE;
+    n->ast_node.temp_node.offset = stack_offset;
     int counter = 1;
     char temp_name[8];
     struct node* curr_node = head_temp;
@@ -625,6 +626,7 @@ struct node* new_temporary(){
     }else{
         sprintf(temp_name,"T%d",counter);
     }
+    stack_offset += 4;
     n->ast_node.temp_node.name = (char*) malloc(sizeof(char)*8);
     strncpy(n->ast_node.temp_node.name, temp_name,7);
     return n;

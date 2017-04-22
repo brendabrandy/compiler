@@ -8,7 +8,7 @@
     int fn_counter = 0;
     extern struct scope_node* curr_scope;
     struct node* list;
-	extern int stat_count;
+	extern int static_count;
     extern int line_num;
     struct node* list_header;   // the start of the AST of expressions and statements
     void yyerror(char *s);
@@ -654,7 +654,7 @@ int main(int argc, char* argv[]){
     yyin = fopen(argv[1],"r");
     list = (struct node*) malloc(sizeof(struct node));
 	list->flag = LIST;
-	stat_count = 0;
+	static_count = 0;
     do{
         yyparse();
     }while(!feof(yyin));
