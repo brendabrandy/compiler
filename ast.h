@@ -9,7 +9,7 @@ struct node * ast_new_ident(char *name, int type);
 struct node * ast_new_scalar_type(int scalar_type);
 struct node * ast_add_scalar_type(struct node* n,int scalar_type);
 struct node * add_type_node(struct node* ident_node, struct node* type_node);
-struct node * ident_var_type(struct node* ident_node);
+struct node * ident_var_type(struct node* ident_node, int* isExtern);
 struct node * ast_new_func(struct node* ident_node);
 struct node * ast_new_ptr();
 struct node * ast_new_ary(int size);
@@ -75,6 +75,7 @@ struct IDENT_COMMON_NODE{
 
 struct IDENT_VAR_NODE{
     struct IDENT_COMMON_NODE node;
+	int static_count;	// used to determine what to append to static value afterwards
     int stg;    // type of storage class,0 for extern, 1 for auto, 2 for static, 3 for 
     int offset; // offset within stack frame
 };

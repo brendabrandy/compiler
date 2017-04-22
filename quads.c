@@ -26,6 +26,8 @@ void generate_quads(struct node* stmt, int scope, struct node* ident){
     if (scope != S_FUNCTION){
         return;
     }
+	inst_txt_directive();
+	inst_func_directive(ident->ast_node.fn_node.node.name);
 	inst_label(ident->ast_node.fn_node.node.name);
 	inst_func_prologue();	
     bb_counter = 0;
@@ -808,7 +810,9 @@ void print_vars(struct node* curr_node){
         fprintf(stderr,"%s{lvar}", curr_node->ast_node.var_node.node.name);
     }else if (curr_node->ast_node.var_node.stg == T_EXTERN){
         fprintf(stderr,"%s{global}", curr_node->ast_node.var_node.node.name);
-    }else{
+    }else if (curr_node->ast_node.var_node.stg == T_STATIC){
+		fprintf(stderr,"%s{static}", curr_node->ast_node.var_node.node.name);
+	}else{
         fprintf(stderr,"%s{wrong} %d", curr_node->ast_node.var_node.node.name,
                                        curr_node->next->ast_node.var_node.stg);
     }

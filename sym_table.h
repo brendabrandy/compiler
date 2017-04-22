@@ -30,3 +30,4 @@ void print_stmt(struct node* stmt, int indent);
 void make_switch_map(struct node* switch_body, struct node* stmt);
 struct sym_node* lookup(char *name, int nspace, int confine_to_current_scope);
 struct node* insert_sym(char* name, int nspace, struct node* new_node, int new_def);
+int offset_inc(struct node* n);

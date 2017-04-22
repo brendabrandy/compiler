@@ -8,10 +8,30 @@
 // NOTE : Do we need to make directives for implicit global vars?
 // QUES : How do we determine the padding?
 // NOTE : when we say something like int a = 'c' , do we promote char to int?
+
 // prints the name of the label
 void inst_label(char* name){
 	fprintf(stdout,"%s:\n", name);
 	return;
+}
+
+void inst_file_directive(char* name){
+	fprintf(stdout, "\t.file\t%s", name);
+}
+
+void inst_txt_directive(){
+	fprintf(stdout,"\t.text\n");
+}
+
+// prints the .comm block for bss block
+void inst_comm_directive(char* name, int size, int alignment){
+	fprintf(stdout,"\t.comm\t%s,%d,%d\n", name, size, alignment);
+}
+
+// prints the directives for function
+void inst_func_directive(char* func_name){
+	fprintf(stdout,"\t.globl\t%s\n", func_name);
+	fprintf(stdout,"\t.type\t%s,@function\n", func_name);
 }
 
 // generates the function prologue

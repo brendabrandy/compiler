@@ -3783,7 +3783,7 @@ yyreturn:
 int main(int argc, char* argv[]){
     yyin = fopen(argv[1],"r");
     list = (struct node*) malloc(sizeof(struct node));
-    list->flag = LIST;
+	list->flag = LIST;
     do{
         yyparse();
     }while(!feof(yyin));

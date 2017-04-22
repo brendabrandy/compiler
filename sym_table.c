@@ -7,11 +7,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include "sym_table.h"
-
 struct scope_node* curr_scope; // the current scope is a global variable
 extern int line_num;
+int stack_offset;
+int stat_count;
 char* fname;
-
+void inst_comm_directive(char* name, int size, int alignment);
 // creates a symbol table, returns pointer to symbol table
 void create_sym_table(char *name, int num){
     // create head node
@@ -38,6 +39,8 @@ void create_sym_table(char *name, int num){
             header->scope_num = S_BLOCK;
         }else{
             header->scope_num = S_FUNCTION;
+			// if it is a function, then reset the stack offset to 0
+			stack_offset = 0;
         }
     }else{
         header->scope_num = S_STRUCTUNION;
@@ -129,7 +132,7 @@ struct sym_node* lookup(char* name, int namespace, int confine_to_current_scope)
 
 // determine what the identifier is supposed to identify. This function can identify
 // variables and functions
-struct node* ident_var_type(struct node* ident_node){
+struct node* ident_var_type(struct node* ident_node, int* isExtern){
     struct node* new_node = (struct node*) malloc(sizeof(struct node));
     struct node* n = ident_node->next;
     struct node* first_node = n;
@@ -144,6 +147,7 @@ struct node* ident_var_type(struct node* ident_node){
         new_node->flag = I_MEMBER_NODE;
        return new_node; 
     }
+
     while (n != NULL){
     if (n->flag == T_SCALAR_NODE){
         // if the next node is a variable node, change the node to a variable
@@ -151,12 +155,20 @@ struct node* ident_var_type(struct node* ident_node){
         new_node->flag = I_VAR_NODE;
         if (n->ast_node.scalar_node.stg_class != 0){
             new_node->ast_node.var_node.stg = n->ast_node.scalar_node.stg_class;
+			if (new_node->ast_node.var_node.stg == T_STATIC){
+				/* */
+			}if (new_node->ast_node.var_node.stg == T_EXTERN){
+				*isExtern = 1;
+			}else{
+				*isExtern = 0;
+			}
         }else{
             if (strcmp(curr_scope->name,"global") == 0){
                 new_node->ast_node.var_node.stg = T_EXTERN;
             }else{
                 new_node->ast_node.var_node.stg = T_AUTO;
             }
+			*isExtern = 0;
         }
         new_node->next = first_node;
         break;
@@ -222,12 +234,22 @@ struct node* insert_sym(char* name, int namespace, struct node* new_node, int ne
     struct sym_node* existing_sym, *current_sym, *new_sym;
     struct scope_node* insert_scope;
     struct node* corrected_node;
+	int s_offset, *isExtern;
     struct node* existing_node, *existing_node_arg, *new_node_arg;
     if (curr_scope == NULL){
         create_sym_table("global", 0);
     }
     if (new_node->flag == I_NODE){
-        corrected_node = ident_var_type(new_node);
+        corrected_node = ident_var_type(new_node, isExtern);
+		if (corrected_node->flag == I_VAR_NODE){
+			corrected_node->ast_node.var_node.offset = stack_offset;
+			s_offset = offset_inc(corrected_node);
+			stack_offset += s_offset;
+			// if it is a global variable
+			if (*isExtern != 1 && curr_scope->scope_num == S_GLOBAL){
+				inst_comm_directive(name, s_offset, s_offset);
+			}
+		}
     }else{
         corrected_node = new_node;
     }  
@@ -612,6 +634,24 @@ void print_stmt(struct node* stmt, int indent){
         }
     }
     free(indentation);
+}
+
+int offset_inc(struct node* n){
+	if (n->flag == I_VAR_NODE){
+		return offset_inc(n->next);
+	}else if (n->flag == T_ARY_NODE){
+		return n->ast_node.ary_node.ary_size * offset_inc(n->ast_node.ary_node.type);
+	}else if(n->flag == T_PTR_NODE){
+		return 4;
+	}else if (n->flag == T_SCALAR_NODE){
+		switch(n->ast_node.scalar_node.type){
+			case T_SHORT: return SIZEOF_SHORT;
+			case T_INT:   return SIZEOF_INT;
+			case T_LONG:  return SIZEOF_LONG;
+			case T_CHAR:  return SIZEOF_CHAR;
+		}
+	}
+	return 0;
 }
 
 void print_debug_stmt(struct node* n){
