@@ -68,6 +68,36 @@ void inst_mov(int opcode, struct node* res, struct node* src1){
     fprintf(stdout,"\n");
 }
 
+
+void access_mem(int opcode, struct node* addr, struct node* reg){
+	switch(opcode){
+		case QUAD_LOAD:
+			// the form will be in reg = LOAD [addr]
+			fprintf(stdout, "\tmovl\t(");
+			inst_print_vars(addr);
+			fprintf(stdout,"), ");
+			inst_print_vars(reg);
+			fprintf(stdout,"\n");
+			break;
+		case QUAD_STORE:
+			// the form wil be in STORE reg, [addr]
+			fprintf(stdout,"\tmovl\t");
+			inst_print_vars(reg);
+			fprintf(stdout,", (");
+			inst_print_vars(addr);
+			fprintf(stdout,")\n");
+			break;
+		case QUAD_LEA:
+			// the form will be in reg = LEA addr
+			fprintf(stdout,"\tleal\t");
+			inst_print_vars(addr);
+			fprintf(stdout,", ");
+			inst_print_vars(reg);
+			fprintf(stdout,"\n");
+			break;
+	}	
+}
+
 // generates assembly for quads expression like res = OPCODE src1
 // general strategy will be
 // mov src1, %ecx

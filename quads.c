@@ -793,9 +793,18 @@ void print_quad(struct quad* curr_quad){
             fprintf(stderr,"UPLUS"); 
             inst_mov(curr_quad->opcode, curr_quad->result, curr_quad->src1);   
             break;
-        case QUAD_LOAD: fprintf(stderr,"LOAD");   break;
-        case QUAD_STORE: fprintf(stderr,"STORE"); break;
-        case QUAD_LEA: fprintf(stderr,"LEA");     break;
+        case QUAD_LOAD: 
+			fprintf(stderr,"LOAD");
+			access_mem(curr_quad->opcode, curr_quad->src1, curr_quad->result);
+			break;
+        case QUAD_STORE: 
+			fprintf(stderr,"STORE"); 
+			access_mem(curr_quad->opcode, curr_quad->src2, curr_quad->src1);
+			break;
+        case QUAD_LEA: 
+			fprintf(stderr,"LEA");
+			access_mem(curr_quad->opcode, curr_quad->src1, curr_quad->result);
+			break;
         case QUAD_MOV:
             fprintf(stderr,"MOV");
             inst_mov(curr_quad->opcode, curr_quad->result, curr_quad->src1);
