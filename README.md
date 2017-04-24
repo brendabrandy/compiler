@@ -33,7 +33,7 @@ General expression of the quad looks like this:
 |BR    |QUAD\_BR    | branch destination | NULL     | NULL | unconditional branch            |Y      |
 |ADD   |E\_ADD      | src1               | src2     | dst  | dst = src1 + src2               |Y      |
 |MINUS |E\_MINUS    | src1               | src2     | dst  | dst = src1 - src2               |Y      |
-|MUL   |E\_MUL      | src1               | src2     | dst  | dst = src1 * src2               |N      |
+|MUL   |E\_MUL      | src1               | src2     | dst  | dst = src1 * src2               |Y      |
 |DIV   |E\_DIV      | src1               | src2     | dst  | dst = src1 / src2               |N      |
 |MOD   |E\_MOD      | src1               | src2     | dst  | dst = src1 % src2               |N      |
 |SHL   |E\_SHL      | src1               | src2     | dst  | dst = src1 << src2              |Y      |

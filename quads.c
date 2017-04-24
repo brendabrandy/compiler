@@ -751,7 +751,10 @@ void print_quad(struct quad* curr_quad){
             fprintf(stderr,"MINUS");    
             inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
             break;
-        case E_MUL: fprintf(stderr,"MUL");        break;
+        case E_MUL: 
+			fprintf(stderr,"MUL");
+			inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
+			break;
         case E_DIV: fprintf(stderr,"DIV");        break;
         case E_MOD: fprintf(stderr,"MOD");        break;
         case E_SHL: 

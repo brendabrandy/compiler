@@ -148,6 +148,9 @@ void inst_two_operands(int opcode, struct node* res, struct node* src1, struct n
         case E_XOR:
             fprintf(stdout,"xorl");
             break;
+		case E_MUL:
+			fprintf(stdout,"imull");
+			break;
         case E_AND:
             fprintf(stdout,"andl");
             break;
