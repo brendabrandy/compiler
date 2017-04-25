@@ -34,8 +34,8 @@ General expression of the quad looks like this:
 |ADD   |E\_ADD      | src1               | src2     | dst  | dst = src1 + src2               |Y      |
 |MINUS |E\_MINUS    | src1               | src2     | dst  | dst = src1 - src2               |Y      |
 |MUL   |E\_MUL      | src1               | src2     | dst  | dst = src1 * src2               |Y      |
-|DIV   |E\_DIV      | src1               | src2     | dst  | dst = src1 / src2               |N      |
-|MOD   |E\_MOD      | src1               | src2     | dst  | dst = src1 % src2               |N      |
+|DIV   |E\_DIV      | src1               | src2     | dst  | dst = src1 / src2               |Y      |
+|MOD   |E\_MOD      | src1               | src2     | dst  | dst = src1 % src2               |Y      |
 |SHL   |E\_SHL      | src1               | src2     | dst  | dst = src1 << src2              |Y      |
 |SHR   |E\_SHR      | src1               | src2     | dst  | dst = src1 >> src2              |Y      |
 |XOR   |E\_XOR      | src1               | src2     | dst  | dst = src1 ^ src2               |Y      |

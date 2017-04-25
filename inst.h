@@ -12,6 +12,7 @@ void inst_func_prologue();
 void access_mem(int opcode, struct node* addr, struct node* reg);
 void inst_one_operand(int opcode, struct node* res, struct node* src1);
 void inst_mov(int opcode, struct node* res, struct node* src1);
+void inst_division(int opcode, struct node* res, struct node* src1, struct node* src2);
 void inst_two_operands(int opcode, struct node* res, struct node* src1, struct node* src2);
 void inst_print_vars(struct node* n);
 void inst_return(struct node* n);
