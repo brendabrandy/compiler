@@ -8,6 +8,7 @@
 * support multiplication, division and modulo
 * support comparison -- am I doing this correctly?
 * first basicblock of function doesn't coincide with the function name label
+* handles &(\*ptr)
 
 # Done to-dos
 
