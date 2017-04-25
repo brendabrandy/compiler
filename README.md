@@ -4,8 +4,8 @@
 
 * support strings, ints, pointers and chars
 * support arguments (does it affect stack frame?, how to reference arguments?)
+* note that after calling a function ,we need to move the esp back to the correct position
 * test it with the previous test cases I have used as a sanity check
-* support multiplication, division and modulo
 * support comparison -- am I doing this correctly?
 * first basicblock of function doesn't coincide with the function name label
 * handles &(\*ptr)
@@ -17,6 +17,7 @@
 * assign an offset to temporary variables as I go through the stack frame
 * support arithmetic operations
 * support loading, storing etc
+* support multiplication, division and modulo
 
 # Quads
 
@@ -35,8 +36,8 @@ General expression of the quad looks like this:
 |ADD   |E\_ADD      | src1               | src2     | dst  | dst = src1 + src2               |Y      |
 |MINUS |E\_MINUS    | src1               | src2     | dst  | dst = src1 - src2               |Y      |
 |MUL   |E\_MUL      | src1               | src2     | dst  | dst = src1 * src2               |Y      |
-|DIV   |E\_DIV      | src1               | src2     | dst  | dst = src1 / src2               |N      |
-|MOD   |E\_MOD      | src1               | src2     | dst  | dst = src1 % src2               |N      |
+|DIV   |E\_DIV      | src1               | src2     | dst  | dst = src1 / src2               |Y      |
+|MOD   |E\_MOD      | src1               | src2     | dst  | dst = src1 % src2               |Y      |
 |SHL   |E\_SHL      | src1               | src2     | dst  | dst = src1 << src2              |Y      |
 |SHR   |E\_SHR      | src1               | src2     | dst  | dst = src1 >> src2              |Y      |
 |XOR   |E\_XOR      | src1               | src2     | dst  | dst = src1 ^ src2               |Y      |
@@ -51,6 +52,6 @@ General expression of the quad looks like this:
 |MOV   |QUAD\_MOV   | src1               | NULL     | dst  | dst = src1                      |Y      |
 |CMP   |QUAD\_CMP   | src1               | src2     | NULL | compare src1 and src2           |N      |
 |RETURN|QUAD\_RETURN| opt                | NULL     | NULL | return opt (can be NULL)        |Y      |
-|CALL  |QUAD\_CALL  | function name      | num\_args| NULL | calls function                  |N      |
+|CALL  |QUAD\_CALL  | function name      | num\_args| NULL | calls function                  |Y      |
 |ARG   |QUAD\_ARGS  | arg number         | arg      | NULL | specifies arguments             |N      |
 |NOT   |QUAD\_NOT   | src1               | NULL     | dst  | dst = !src1                     |N      |

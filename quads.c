@@ -530,7 +530,7 @@ struct node*  gen_rvalue(struct node* node,struct node* target){
 		struct node* args = node->ast_node.fn_call_node.arg;
 		struct node* targs;
 		struct node* i;
-		int counter;
+		int counter = 0;
 		while (args != NULL){
 			targs = gen_rvalue(args ,NULL);
 			i = ast_new_const(counter);
@@ -755,8 +755,14 @@ void print_quad(struct quad* curr_quad){
 			fprintf(stderr,"MUL");
 			inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
 			break;
-        case E_DIV: fprintf(stderr,"DIV");        break;
-        case E_MOD: fprintf(stderr,"MOD");        break;
+        case E_DIV: 
+            fprintf(stderr,"DIV");
+            inst_division(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
+            break;
+        case E_MOD: 
+            fprintf(stderr,"MOD");
+            inst_division(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
+            break;
         case E_SHL: 
             fprintf(stderr,"SHL");  
             inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
@@ -821,7 +827,10 @@ void print_quad(struct quad* curr_quad){
                 inst_return(curr_quad->src1);
             }
 			break;
-		case QUAD_CALL:	fprintf(stderr,"CALL");	  break;
+		case QUAD_CALL:	
+            fprintf(stderr,"CALL");	
+            inst_fn_call(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);  
+            break;
 		case QUAD_ARGS: fprintf(stderr,"ARG");	  break;
         case QUAD_NOT:  fprintf(stderr,"NOT");    break;
     }

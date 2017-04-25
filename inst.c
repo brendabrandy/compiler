@@ -73,19 +73,29 @@ void access_mem(int opcode, struct node* addr, struct node* reg){
 	switch(opcode){
 		case QUAD_LOAD:
 			// the form will be in reg = LOAD [addr]
-			fprintf(stdout, "\tmovl\t(");
-			inst_print_vars(addr);
-			fprintf(stdout,"), ");
+            // leal addr %ecx
+            // movl (%ecx), %ebx
+            // movl %ebx, reg
+            fprintf(stdout, "\tleal\t");
+            inst_print_vars(addr);
+            fprintf(stdout, ", %%ecx\n");
+			fprintf(stdout, "\tmovl\t(%%ecx), %%ebx\n");
+            fprintf(stdout,"\tmovl\t%%ebx, ");
 			inst_print_vars(reg);
 			fprintf(stdout,"\n");
 			break;
 		case QUAD_STORE:
 			// the form wil be in STORE reg, [addr]
-			fprintf(stdout,"\tmovl\t");
-			inst_print_vars(reg);
-			fprintf(stdout,", (");
+            // leal addr, %ecx
+            // movl reg, %ebx
+            // movl %ebx,(%ecx)
+			fprintf(stdout,"\tleal\t");
 			inst_print_vars(addr);
-			fprintf(stdout,")\n");
+			fprintf(stdout,", %%ecx\n");
+            fprintf(stdout,"\tmovl\t");
+			inst_print_vars(reg);
+			fprintf(stdout,", %%ebx\n");
+            fprintf(stdout,"\tmovl\t%%ebx, (%%ecx)\n");
 			break;
 		case QUAD_LEA:
 			// the form will be in reg = LEA addr
@@ -120,6 +130,29 @@ void inst_one_operand(int opcode, struct node* res, struct node* src1){
     fprintf(stdout,"\n");
     
 }
+// mov src2, %ecx
+// div src1, %ecx
+// mov %eax, res for division 
+// mov %edx, res for modulo
+void inst_division(int opcode, struct node* res, struct node* src1, struct node* src2){
+    fprintf(stdout,"\tmovl\t");
+    inst_print_vars(src2);
+    fprintf(stdout,", %%ecx\n");
+    fprintf(stdout,"\tdivl\t");
+    inst_print_vars(src1);
+    fprintf(stdout,", %%ecx");
+    switch(opcode){
+        case E_DIV:
+            fprintf(stdout,"\tmovl\t%%eax, ");
+            break;
+        case E_MOD:
+            fprintf(stdout,"\tmovl\t%%edx, ");
+            break;
+    }
+    inst_print_vars(res);
+    fprintf(stdout,"\n");
+}
+
 
 // generates assembly for quads expression like res = OPCODE src1, src2
 // general strategy will be
@@ -180,6 +213,9 @@ void inst_print_vars(struct node* n){
             else if (n->ast_node.var_node.stg == T_STATIC)
                 fprintf(stdout,"%s.%d", n->ast_node.var_node.node.name, n->ast_node.var_node.static_count);
             break;
+        case I_FN_NODE:
+            fprintf(stdout,"%s", n->ast_node.fn_node.node.name);
+            break;
         case T_TEMP_NODE:
             fprintf(stdout,"-$%d(%%ebp)", n->ast_node.temp_node.offset);
             break;
@@ -203,8 +239,19 @@ void inst_jump(int opcode, char* false_inst, char* true_inst, struct bblock* fal
 }
 
 // generates a function call
-void inst_fn_call(struct node* fn_node){
-	
+void inst_fn_call(int opcode, struct node* res, struct node* src1, struct node* src2){
+    switch(opcode){
+        case QUAD_CALL:
+            fprintf(stdout,"\tcall\t");
+            inst_print_vars(src1);
+            fprintf(stdout,"\n");
+            if (res != NULL){
+                fprintf(stdout,"\tmovl\t%%eax, ");
+                inst_print_vars(res);
+                fprintf(stdout,"\n");
+            }
+            break;
+    }
 }
 
 void inst_return(struct node* n){

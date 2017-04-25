@@ -1,27 +1,33 @@
 AST Dump for function f
 LIST(
  ASSIGNMENT
-  stab_var name=x def @test2.c:4
-  DEREF
-   BINARY OP +
-    stab_var name=a def @test2.c:1
-    CONSTANT: (type=int) 3
- ASSIGNMENT
-  stab_var name=p def @test2.c:4
-  UNARY OP ADDRESSOF
-   DEREF
+  stab_var name=a def @test5.c:4
+  FNCALL, 2 arguments
+   stab_fn name=g def @test5.c:1
+  ARGS
     BINARY OP +
-     stab_var name=a def @test2.c:1
-     CONSTANT: (type=int) 5
+     stab_var name=b def @test5.c:4
+     CONSTANT: (type=int) 3
+    CONSTANT: (type=int) 5
+ ASSIGNMENT
+  stab_var name=c def @test5.c:4
+  BINARY OP <
+   stab_var name=a def @test5.c:4
+   stab_var name=b def @test5.c:4
  RETURN:
 )
 .BB1.1:
-	%T00001 = LEA	a{global}
-	%T00002 = MUL	4	,3
-	%T00003 = ADD	%T00001	,%T00002
-	x{lvar} = LOAD	[%T00003]
-	%T00004 = LEA	a{global}
-	%T00005 = MUL	4	,5
-	%T00006 = ADD	%T00004	,%T00005
-	p{lvar} = MOV	%T00006
+	%T00001 = ADD	b{lvar}	,3
+	ARG	1	,%T00001
+	ARG	2	,5
+	a{lvar} = CALL	$g	,2
+	CMP	a{lvar}	,b{lvar}
+	BRLT	.BB1.3, .BB1.2
+.BB1.2:
+	c{lvar} = MOV	1
+	BR	.BB1.4
+.BB1.4:
 	RETURN
+.BB1.3:
+	c{lvar} = MOV	0
+	BR	.BB1.4
