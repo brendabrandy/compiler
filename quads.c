@@ -530,7 +530,7 @@ struct node*  gen_rvalue(struct node* node,struct node* target){
 		struct node* args = node->ast_node.fn_call_node.arg;
 		struct node* targs;
 		struct node* i;
-		int counter;
+		int counter = 0;
 		while (args != NULL){
 			targs = gen_rvalue(args ,NULL);
 			i = ast_new_const(counter);
