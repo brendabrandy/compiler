@@ -51,6 +51,6 @@ General expression of the quad looks like this:
 |MOV   |QUAD\_MOV   | src1               | NULL     | dst  | dst = src1                      |Y      |
 |CMP   |QUAD\_CMP   | src1               | src2     | NULL | compare src1 and src2           |N      |
 |RETURN|QUAD\_RETURN| opt                | NULL     | NULL | return opt (can be NULL)        |Y      |
-|CALL  |QUAD\_CALL  | function name      | num\_args| NULL | calls function                  |N      |
+|CALL  |QUAD\_CALL  | function name      | num\_args| NULL | calls function                  |Y      |
 |ARG   |QUAD\_ARGS  | arg number         | arg      | NULL | specifies arguments             |N      |
 |NOT   |QUAD\_NOT   | src1               | NULL     | dst  | dst = !src1                     |N      |

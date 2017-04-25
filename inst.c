@@ -213,6 +213,9 @@ void inst_print_vars(struct node* n){
             else if (n->ast_node.var_node.stg == T_STATIC)
                 fprintf(stdout,"%s.%d", n->ast_node.var_node.node.name, n->ast_node.var_node.static_count);
             break;
+        case I_FN_NODE:
+            fprintf(stdout,"%s", n->ast_node.fn_node.node.name);
+            break;
         case T_TEMP_NODE:
             fprintf(stdout,"-$%d(%%ebp)", n->ast_node.temp_node.offset);
             break;
@@ -237,7 +240,18 @@ void inst_jump(int opcode, char* false_inst, char* true_inst, struct bblock* fal
 
 // generates a function call
 void inst_fn_call(int opcode, struct node* res, struct node* src1, struct node* src2){
-	
+    switch(opcode){
+        case QUAD_CALL:
+            fprintf(stdout,"\tcall\t");
+            inst_print_vars(src1);
+            fprintf(stdout,"\n");
+            if (res != NULL){
+                fprintf(stdout,"\tmovl\t%%eax, ");
+                inst_print_vars(res);
+                fprintf(stdout,"\n");
+            }
+            break;
+    }
 }
 
 void inst_return(struct node* n){

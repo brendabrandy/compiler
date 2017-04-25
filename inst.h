@@ -9,6 +9,7 @@ void inst_comm_directive(char* name, int size, int alignment, int stat_count);
 void inst_func_directive(char* func_name);
 void inst_directive(char* directive);
 void inst_func_prologue();
+void inst_fn_call(int opcode, struct node* res, struct node* src1, struct node* src2);
 void access_mem(int opcode, struct node* addr, struct node* reg);
 void inst_one_operand(int opcode, struct node* res, struct node* src1);
 void inst_mov(int opcode, struct node* res, struct node* src1);

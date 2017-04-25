@@ -1,23 +1,33 @@
-	.text
-	.globl	f
-	.type	f,@function
-f:
-	pushl	%ebp
-	movl	%esp, %ebp
-	subl	$12, %esp
-	subl	$12, %esp
+AST Dump for function f
+LIST(
+ ASSIGNMENT
+  stab_var name=a def @test5.c:4
+  FNCALL, 2 arguments
+   stab_fn name=g def @test5.c:1
+  ARGS
+    BINARY OP +
+     stab_var name=b def @test5.c:4
+     CONSTANT: (type=int) 3
+    CONSTANT: (type=int) 5
+ ASSIGNMENT
+  stab_var name=c def @test5.c:4
+  BINARY OP <
+   stab_var name=a def @test5.c:4
+   stab_var name=b def @test5.c:4
+ RETURN:
+)
 .BB1.1:
-	movl	-$3, %ecx
-	addl	-$4(%ebp), %ecx
-	movl	%ecx, -$12(%ebp)
-	jnl	.BB1.3
-	jl	.BB1.2
+	%T00001 = ADD	b{lvar}	,3
+	ARG	1	,%T00001
+	ARG	2	,5
+	a{lvar} = CALL	$g	,2
+	CMP	a{lvar}	,b{lvar}
+	BRLT	.BB1.3, .BB1.2
 .BB1.2:
-	movl	-$1, -$8(%ebp)
-	jmp	.BB1.4
+	c{lvar} = MOV	1
+	BR	.BB1.4
 .BB1.4:
-	leave
-	ret
+	RETURN
 .BB1.3:
-	movl	-$0, -$8(%ebp)
-	jmp	.BB1.4
+	c{lvar} = MOV	0
+	BR	.BB1.4

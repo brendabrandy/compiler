@@ -827,7 +827,10 @@ void print_quad(struct quad* curr_quad){
                 inst_return(curr_quad->src1);
             }
 			break;
-		case QUAD_CALL:	fprintf(stderr,"CALL");	  break;
+		case QUAD_CALL:	
+            fprintf(stderr,"CALL");	
+            inst_fn_call(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);  
+            break;
 		case QUAD_ARGS: fprintf(stderr,"ARG");	  break;
         case QUAD_NOT:  fprintf(stderr,"NOT");    break;
     }
