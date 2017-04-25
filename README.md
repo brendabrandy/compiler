@@ -4,8 +4,8 @@
 
 * support strings, ints, pointers and chars
 * support arguments (does it affect stack frame?, how to reference arguments?)
+* note that after calling a function ,we need to move the esp back to the correct position
 * test it with the previous test cases I have used as a sanity check
-* support multiplication, division and modulo
 * support comparison -- am I doing this correctly?
 * first basicblock of function doesn't coincide with the function name label
 
@@ -16,6 +16,7 @@
 * assign an offset to temporary variables as I go through the stack frame
 * support arithmetic operations
 * support loading, storing etc
+* support multiplication, division and modulo
 
 # Quads
 

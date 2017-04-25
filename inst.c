@@ -236,7 +236,7 @@ void inst_jump(int opcode, char* false_inst, char* true_inst, struct bblock* fal
 }
 
 // generates a function call
-void inst_fn_call(struct node* fn_node){
+void inst_fn_call(int opcode, struct node* res, struct node* src1, struct node* src2){
 	
 }
 

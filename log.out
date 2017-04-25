@@ -1,27 +1,23 @@
-AST Dump for function f
-LIST(
- ASSIGNMENT
-  stab_var name=x def @test2.c:4
-  DEREF
-   BINARY OP +
-    stab_var name=a def @test2.c:1
-    CONSTANT: (type=int) 3
- ASSIGNMENT
-  stab_var name=p def @test2.c:4
-  UNARY OP ADDRESSOF
-   DEREF
-    BINARY OP +
-     stab_var name=a def @test2.c:1
-     CONSTANT: (type=int) 5
- RETURN:
-)
+	.text
+	.globl	f
+	.type	f,@function
+f:
+	pushl	%ebp
+	movl	%esp, %ebp
+	subl	$12, %esp
+	subl	$12, %esp
 .BB1.1:
-	%T00001 = LEA	a{global}
-	%T00002 = MUL	4	,3
-	%T00003 = ADD	%T00001	,%T00002
-	x{lvar} = LOAD	[%T00003]
-	%T00004 = LEA	a{global}
-	%T00005 = MUL	4	,5
-	%T00006 = ADD	%T00004	,%T00005
-	p{lvar} = MOV	%T00006
-	RETURN
+	movl	-$3, %ecx
+	addl	-$4(%ebp), %ecx
+	movl	%ecx, -$12(%ebp)
+	jnl	.BB1.3
+	jl	.BB1.2
+.BB1.2:
+	movl	-$1, -$8(%ebp)
+	jmp	.BB1.4
+.BB1.4:
+	leave
+	ret
+.BB1.3:
+	movl	-$0, -$8(%ebp)
+	jmp	.BB1.4
