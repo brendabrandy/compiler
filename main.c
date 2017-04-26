@@ -1,10 +1,5 @@
 int a;
-char b;
-char d;
-int c;
-
-extern int i;
+int j;
 void main(){
-    extern int j;
-    a = j + 1;
+    a = !(j);
 }

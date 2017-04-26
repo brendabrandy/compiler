@@ -360,6 +360,17 @@ struct node* insert_into_list(struct node* header, struct node* n){
     return header;
 }
 
+void inst_print_string(struct node* str_node){
+    fprintf(stdout,"\t.section\t.rodata\n");
+    fprintf(stdout,".string_ro_%d:\n", str_node->ast_node.constant_node.str_count);
+    fprintf(stdout,"\t.string\t\"%s\"\n", str_node->ast_node.constant_node.str_value);
+    fprintf(stdout,"\t.data\n");
+    fprintf(stdout,"\t.align\t4\n");
+    fprintf(stdout,"\t.size\t.string_%d, %d\n", str_node->ast_node.constant_node.str_count, str_node->ast_node.constant_node.str_size);
+    fprintf(stdout,".string_%d:\n", str_node->ast_node.constant_node.str_count);
+    fprintf(stdout,"\t.long\t.string_ro_%d\n", str_node->ast_node.constant_node.str_count);
+}
+
 void print_func_dump(int indent, struct node* n, struct node* ident){
     struct node* stmt = n;
     struct node* checker, *new_return;
@@ -632,6 +643,9 @@ void print_stmt(struct node* stmt, int indent){
             case E_CONST_CHAR:
                 fprintf(stderr,"%sCONSTANT: (type=char) %c\n",indentation,
                         stmt->ast_node.constant_node.char_value);
+                break;
+            case E_STR:
+                fprintf(stderr,"%sSTRING: (size=%d)%s\n", indentation, stmt->ast_node.constant_node.str_size, stmt->ast_node.constant_node.str_value);
                 break;
 			case E_LIST:
 				print_stmt(stmt->ast_node.elist_node.ptr_to_arg, indent+1);

@@ -68,6 +68,9 @@ void gen_quads(struct node* stmt, struct bblock* break_node, struct bblock* cont
             case ST_BREAK:
                 gen_break(break_node); 
                 break;
+            case E_FN_CALL:
+                gen_rvalue(curr_stmt, NULL);
+                break;
             case E_UNARY:
                 gen_rvalue(curr_stmt, NULL);
                 break;                
@@ -320,7 +323,7 @@ struct node* gen_assign(struct node* node){
     }
     if (dstmode == E_DIRECT){
         src = gen_rvalue(node->ast_node.assign_node.rval, dst);
-        if (src->flag == E_CONST_CHAR || src->flag == E_CONSTANT){
+        if (src->flag == E_CONST_CHAR || src->flag == E_CONSTANT || src->flag == E_STR){
             emit(QUAD_MOV, src, NULL , dst);
         }
     }else{
@@ -336,7 +339,7 @@ struct node* gen_lvalue(struct node* node, int *mode){
         *mode = E_DIRECT;
         return node;
     }
-    if (node->flag == E_CONSTANT || node->flag == E_CONST_CHAR) return NULL;
+    if (node->flag == E_CONSTANT || node->flag == E_CONST_CHAR || node->flag == E_STR) return NULL;
     if (node->flag == E_DEREF){
         *mode = E_INDIRECT;
         ret_val = gen_rvalue(node->ast_node.deref_node.dereferee, NULL);
@@ -365,7 +368,7 @@ struct node*  gen_rvalue(struct node* node,struct node* target){
         return target;
     }
 	if (node->flag == T_PTR_NODE) return node->ast_node.ptr_node.ptr_to_node;
-    if (node->flag == E_CONSTANT) return node;      // if it is a constant
+    if (node->flag == E_CONSTANT || node->flag == E_CONST_CHAR || node->flag == E_STR) return node;      // if it is a constant
 	if (node->flag == E_UNARY){
         struct node* ptr_to;
 		switch(node->ast_node.unary_node.opcode){
@@ -399,7 +402,7 @@ struct node*  gen_rvalue(struct node* node,struct node* target){
                 emit(QUAD_MOV, one, NULL, target);
                 link_bb(cur_bb, ALWAYS, Bn, NULL);
                 cur_bb = Bf;
-                emit(QUAD_MOV, 0, NULL, target);
+                emit(QUAD_MOV, zero, NULL, target);
                 link_bb(cur_bb, ALWAYS, Bn, NULL);
                 cur_bb = Bn;
                 return target;
@@ -532,9 +535,6 @@ struct node*  gen_rvalue(struct node* node,struct node* target){
 		struct node* i;
 		int counter = 0;
 		while (args != NULL){
-			// targs = gen_rvalue(args ,NULL);
-			// i = ast_new_const(counter);
-			// emit(QUAD_ARGS,i,targs,NULL);
 			counter += 1;
 			args = args->next;	
 		}
@@ -828,7 +828,10 @@ void print_quad(struct quad* curr_quad){
             fprintf(stderr,"MOV");
             inst_mov(curr_quad->opcode, curr_quad->result, curr_quad->src1);
             break;
-        case QUAD_CMP: fprintf(stderr,"CMP");     break;
+        case QUAD_CMP: 
+            fprintf(stderr,"CMP");
+            inst_fn_call(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
+            break;
         case QUAD_RETURN: 
 			fprintf(stderr,"RETURN");
 			if (curr_quad->src1 == NULL){
@@ -845,7 +848,10 @@ void print_quad(struct quad* curr_quad){
 			fprintf(stderr,"ARG");	  
 			inst_fn_call(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
 			break;
-        case QUAD_NOT:  fprintf(stderr,"NOT");    break;
+        case QUAD_NOT:  
+            fprintf(stderr,"NOT");
+            inst_not_operator(curr_quad->result, curr_quad->src1);
+            break;
     }
     if (curr_quad->src1 != NULL){
 		if (curr_quad->opcode == QUAD_LOAD || curr_quad->opcode == QUAD_STORE){
@@ -870,6 +876,7 @@ void print_node(struct node* my_node){
 		case I_FN_NODE:	fprintf(stderr,"$%s", my_node->ast_node.fn_node.node.name); break;
         case T_TEMP_NODE: fprintf(stderr,"%%%s",my_node->ast_node.temp_node.name);   break;
         case E_CONSTANT:  fprintf(stderr,"%d", my_node->ast_node.constant_node.value);  break;
+        case E_STR:     fprintf(stderr,".string_%d", my_node->ast_node.constant_node.str_count); break;
         case E_CONST_CHAR: fprintf(stderr,"%c", my_node->ast_node.constant_node.char_value); break;
 		default:    fprintf(stderr,"%d\n", my_node->flag); break;
     }

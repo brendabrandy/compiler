@@ -93,6 +93,7 @@
 #define E_DEREF     437
 #define E_FN_CALL   438
 #define E_LIST		439
+#define E_STR       440
 
 #define ST_ASSIGN   500
 #define ST_IF       501

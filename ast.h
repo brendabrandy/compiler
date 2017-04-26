@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "flags.h"
+extern int string_count;
 struct node * ast_new_ident(char *name, int type);
 struct node * ast_new_scalar_type(int scalar_type);
 struct node * ast_add_scalar_type(struct node* n,int scalar_type);
@@ -35,7 +36,7 @@ struct node * ast_new_const_char(char value);
 struct node * ast_new_case(struct node *const_expr);
 struct node * ast_new_goto(struct node* label);
 struct node * ast_new_expr_arg(struct node* prev_node, struct node* new_arg);
-
+struct node * ast_new_const_string(char* str, int str_size, int string_count);
 
 struct TYPE_ARY_NODE{
     int ary_size;
@@ -140,7 +141,10 @@ struct EXPR_BINOP_NODE{
 
 struct EXPR_CONSTANT_NODE{
     int value;
+    int str_size;
     char char_value;
+    char* str_value;
+    int str_count;
 };
 
 struct EXPR_UNARY_NODE{

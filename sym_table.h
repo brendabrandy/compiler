@@ -24,6 +24,7 @@ void destroy_sym_table();
 void print_type(struct node* ptr);
 void enter_block(struct node* n, int num);
 void leave_block();
+void inst_print_string(struct node* str_node);
 struct node* insert_into_list();
 void print_func_dump(int indent, struct node* n, struct node* ident);
 void print_stmt(struct node* stmt, int indent);

@@ -297,7 +297,15 @@ struct node* ast_new_const_char(char value){
     return n;
 }
 
-
+struct node* ast_new_const_string(char* str, int str_size, int string_count){
+    struct node* n = (struct node*) malloc(sizeof(struct node));
+    n->ast_node.constant_node.str_value = (char*) malloc(str_size * sizeof(char));
+    strncpy(n->ast_node.constant_node.str_value, str, str_size);
+    n->ast_node.constant_node.str_size = str_size;
+    n->ast_node.constant_node.str_count = string_count;
+    n->flag = E_STR;
+    return n;
+}
 
 struct node* ast_new_unary(int opcode, struct node* operand){
     struct node* n = (struct node*) malloc(sizeof(struct node));

@@ -1,8 +1,6 @@
 	.file	"main.c"
 	.comm	a,4,4
-	.comm	b,1,1
-	.comm	d,1,1
-	.comm	c,4,4
+	.comm	j,4,4
 	.text
 	.globl	main
 	.type	main, @function
@@ -11,7 +9,9 @@ main:
 	pushl	%ebp
 	movl	%esp, %ebp
 	movl	j, %eax
-	addl	$1, %eax
+	testl	%eax, %eax
+	sete	%al
+	movzbl	%al, %eax
 	movl	%eax, a
 	nop
 	popl	%ebp

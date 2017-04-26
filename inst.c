@@ -131,6 +131,19 @@ void inst_one_operand(int opcode, struct node* res, struct node* src1){
     fprintf(stdout,"\n");
     
 }
+
+void inst_not_operator(struct node* res, struct node* src1){
+    fprintf(stdout,"\tmovl\t");
+    inst_print_vars(src1);
+    fprintf(stdout,", %%eax\n");
+    fprintf(stdout, "\ttestl\t%%eax, %%eax\n");
+    fprintf(stdout,"\tsetl\t%%al\n");
+    fprintf(stdout,"\tmovzbl\t%%al, %%eax\n");
+    fprintf(stdout,"\tmovl\t%%eax, ");
+    inst_print_vars(res);
+    fprintf(stdout,"\n");
+}
+
 // mov src2, %ecx
 // div src1, %ecx
 // mov %eax, res for division 
@@ -223,6 +236,9 @@ void inst_print_vars(struct node* n){
         case E_CONSTANT:
             fprintf(stdout,"$%d", n->ast_node.constant_node.value);
             break;
+        case E_STR:
+            fprintf(stdout,".string_%d", n->ast_node.constant_node.str_count);
+            break;
     }
 }
 
@@ -237,6 +253,16 @@ void inst_jump(int opcode, char* false_inst, char* true_inst, struct bblock* fal
 			fprintf(stdout, "\t%s\t.BB%d.%d\n", true_inst, true_arm->fn_count, true_arm->bb_count);
 			break;
 	};
+}
+
+void inst_cmp(struct node* src1, struct node* src2){
+    fprintf(stdout,"\tmovl\t");
+    inst_print_vars(src1);
+    fprintf(stdout,", %%ebx\n");
+    fprintf(stdout,"\tmovl\t");
+    inst_print_vars(src2);
+    fprintf(stdout,", %%ecx\n");
+    fprintf(stdout,"\tcmp\t%%ebx, %%ecx\n");
 }
 
 // generates a function call
@@ -260,9 +286,10 @@ void inst_fn_call(int opcode, struct node* res, struct node* src1, struct node* 
             }
 			break;
 		case QUAD_ARGS:
-			fprintf(stdout,"\tpushl\t");
-			inst_print_vars(src2);
-			fprintf(stdout,"\n");
+            fprintf(stdout,"\tmovl\t");
+            inst_print_vars(src2);
+            fprintf(stdout,", %%ecx\n");
+			fprintf(stdout,"\tpushl\t%%ecx\n");
 			break;
     }
 }

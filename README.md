@@ -2,9 +2,9 @@
 
 # To do
 
-* support strings, ints, pointers and chars
+* zeros needs to be a register, or if it is a memory location ,just dont print it out
+* need to escape the stuff with strings
 * test it with the previous test cases I have used as a sanity check
-* support comparison -- am I doing this correctly?
 * first basicblock of function doesn't coincide with the function name label
 
 # Done to-dos
@@ -19,6 +19,8 @@
 * support arguments (does it affect stack frame?, how to reference arguments?)
 * handles &(\*ptr)
 
+* support strings, ints, pointers and chars
+* support comparison -- am I doing this correctly?
 # Quads
 
 General expression of the quad looks like this:
@@ -50,8 +52,8 @@ General expression of the quad looks like this:
 |STORE |QUAD\_STORE | src1               | addr     | NULL | * addr = src1 (STORE a, [addr]) |Y      |
 |LEA   |QUAD\_LEA   | src1               | NULL     | dst  | dst = &src1                     |Y      |
 |MOV   |QUAD\_MOV   | src1               | NULL     | dst  | dst = src1                      |Y      |
-|CMP   |QUAD\_CMP   | src1               | src2     | NULL | compare src1 and src2           |N      |
+|CMP   |QUAD\_CMP   | src1               | src2     | NULL | compare src1 and src2           |Y      |
 |RETURN|QUAD\_RETURN| opt                | NULL     | NULL | return opt (can be NULL)        |Y      |
 |CALL  |QUAD\_CALL  | function name      | num\_args| NULL | calls function                  |Y      |
 |ARG   |QUAD\_ARGS  | arg number         | arg      | NULL | specifies arguments             |Y      |
-|NOT   |QUAD\_NOT   | src1               | NULL     | dst  | dst = !src1                     |N      |
+|NOT   |QUAD\_NOT   | src1               | NULL     | dst  | dst = !src1                     |Y      |

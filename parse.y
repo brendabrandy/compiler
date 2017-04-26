@@ -5,6 +5,7 @@
     extern int yyparse();
     extern int yylex();
     char *fname;
+    int string_count;
     int fn_counter = 0;
     extern struct scope_node* curr_scope;
     struct node* list;
@@ -502,6 +503,8 @@ bitwise_xor_expr conditional_body
     primary_expr:     IDENT         {struct sym_node* n = lookup($1, N_OTHERS, 0);
                                      $$ = n->ast_node;}
                     | NUMBER        {$$ = ast_new_const($1.number);}
+                    | CHARLIT          {$$ = ast_new_const_char($1.actual_char);}
+                    | STRING        {$$ = ast_new_const_string($1.string_literal, $1.string_size, string_count);string_count += 1; inst_print_string($$);}
                     | '(' expr ')'  {$$ = $2;}
                     ;
 
@@ -655,6 +658,7 @@ int main(int argc, char* argv[]){
     list = (struct node*) malloc(sizeof(struct node));
 	list->flag = LIST;
 	static_count = 0;
+    string_count = 0;
     do{
         yyparse();
     }while(!feof(yyin));
