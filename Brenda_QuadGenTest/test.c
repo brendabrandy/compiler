@@ -1,6 +1,8 @@
 int c(){
 	int a, *b;
-    b = &a + 4;
+	int arr[10][20];
+	b = &(*arr);
+    // b = &a + 4;
     *b = a + 4;
 }
 

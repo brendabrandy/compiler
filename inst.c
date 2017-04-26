@@ -52,10 +52,11 @@ void inst_func_directive(char* func_name){
 void inst_func_prologue(){
 	fprintf(stdout, "\tpushl\t%%ebp\n");
 	fprintf(stdout, "\tmovl\t%%esp, %%ebp\n");
+	fprintf(stdout,"\tsubl\t$8, %%esp\n");	// for ebp and esp
     fprintf(stdout, "\tsubl\t$%d, %%esp\n", stack_offset);
-    if (stack_offset %16 != 0){
-        int padding = stack_offset%16;
-        fprintf(stdout,"\tsubl\t$%d, %%esp\n", padding);
+    if ((stack_offset+8) %16 != 0){
+        int padding = (stack_offset+8)%16;
+        fprintf(stdout,"\tsubl\t$%d, %%esp\n", (16-padding));
     }
 	return;
 }
@@ -220,7 +221,7 @@ void inst_print_vars(struct node* n){
             fprintf(stdout,"-$%d(%%ebp)", n->ast_node.temp_node.offset);
             break;
         case E_CONSTANT:
-            fprintf(stdout,"-$%d", n->ast_node.constant_node.value);
+            fprintf(stdout,"$%d", n->ast_node.constant_node.value);
             break;
     }
 }
@@ -242,15 +243,27 @@ void inst_jump(int opcode, char* false_inst, char* true_inst, struct bblock* fal
 void inst_fn_call(int opcode, struct node* res, struct node* src1, struct node* src2){
     switch(opcode){
         case QUAD_CALL:
+			fprintf(stdout,"\tsubl\t");
+			struct node* k = ast_new_const(src2->ast_node.constant_node.value*4);
+			inst_print_vars(k);
+			fprintf(stdout,", %%esp\n");
             fprintf(stdout,"\tcall\t");
             inst_print_vars(src1);
             fprintf(stdout,"\n");
-            if (res != NULL){
+            fprintf(stdout,"\taddl\t");
+			inst_print_vars(k);
+			fprintf(stdout,", %%esp\n");
+			if (res != NULL){
                 fprintf(stdout,"\tmovl\t%%eax, ");
                 inst_print_vars(res);
                 fprintf(stdout,"\n");
             }
-            break;
+			break;
+		case QUAD_ARGS:
+			fprintf(stdout,"\tpushl\t");
+			inst_print_vars(src2);
+			fprintf(stdout,"\n");
+			break;
     }
 }
 

@@ -3,12 +3,9 @@
 # To do
 
 * support strings, ints, pointers and chars
-* support arguments (does it affect stack frame?, how to reference arguments?)
-* note that after calling a function ,we need to move the esp back to the correct position
 * test it with the previous test cases I have used as a sanity check
 * support comparison -- am I doing this correctly?
 * first basicblock of function doesn't coincide with the function name label
-* handles &(\*ptr)
 
 # Done to-dos
 
@@ -18,6 +15,9 @@
 * support arithmetic operations
 * support loading, storing etc
 * support multiplication, division and modulo
+* note that after calling a function ,we need to move the esp back to the correct position
+* support arguments (does it affect stack frame?, how to reference arguments?)
+* handles &(\*ptr)
 
 # Quads
 
@@ -53,5 +53,5 @@ General expression of the quad looks like this:
 |CMP   |QUAD\_CMP   | src1               | src2     | NULL | compare src1 and src2           |N      |
 |RETURN|QUAD\_RETURN| opt                | NULL     | NULL | return opt (can be NULL)        |Y      |
 |CALL  |QUAD\_CALL  | function name      | num\_args| NULL | calls function                  |Y      |
-|ARG   |QUAD\_ARGS  | arg number         | arg      | NULL | specifies arguments             |N      |
+|ARG   |QUAD\_ARGS  | arg number         | arg      | NULL | specifies arguments             |Y      |
 |NOT   |QUAD\_NOT   | src1               | NULL     | dst  | dst = !src1                     |N      |

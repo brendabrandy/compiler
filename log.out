@@ -17,9 +17,9 @@ LIST(
  RETURN:
 )
 .BB1.1:
+	ARG	1	,5
 	%T00001 = ADD	b{lvar}	,3
-	ARG	1	,%T00001
-	ARG	2	,5
+	ARG	0	,%T00001
 	a{lvar} = CALL	$g	,2
 	CMP	a{lvar}	,b{lvar}
 	BRLT	.BB1.3, .BB1.2

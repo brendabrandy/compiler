@@ -532,11 +532,21 @@ struct node*  gen_rvalue(struct node* node,struct node* target){
 		struct node* i;
 		int counter = 0;
 		while (args != NULL){
-			targs = gen_rvalue(args ,NULL);
-			i = ast_new_const(counter);
-			emit(QUAD_ARGS,i,targs,NULL);
+			// targs = gen_rvalue(args ,NULL);
+			// i = ast_new_const(counter);
+			// emit(QUAD_ARGS,i,targs,NULL);
 			counter += 1;
 			args = args->next;	
+		}
+		for (int k = 0; k < counter; k++){
+			args = node->ast_node.fn_call_node.arg;
+			// traverse list counter-1-i times
+			for (int j = 0; j < counter-1-k ; j++){
+				args = args->next;
+			}
+			targs = gen_rvalue(args, NULL);
+			i = ast_new_const(counter-1-k);
+			emit(QUAD_ARGS, i, targs, NULL);
 		}
 		if (target == NULL)
 			target = new_temporary();	
@@ -831,7 +841,10 @@ void print_quad(struct quad* curr_quad){
             fprintf(stderr,"CALL");	
             inst_fn_call(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);  
             break;
-		case QUAD_ARGS: fprintf(stderr,"ARG");	  break;
+		case QUAD_ARGS: 
+			fprintf(stderr,"ARG");	  
+			inst_fn_call(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
+			break;
         case QUAD_NOT:  fprintf(stderr,"NOT");    break;
     }
     if (curr_quad->src1 != NULL){
