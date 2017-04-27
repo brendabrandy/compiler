@@ -1,0 +1,14 @@
+AST Dump for function main
+LIST(
+ FNCALL, 1 arguments
+  stab_fn name=printf def @hello.c:1
+ ARGS
+   STRING: (size=13)Hello world!
+
+ RETURN:
+  CONSTANT: (type=int) 0
+)
+.BB1.1:
+	ARG	0	,.string_0
+	%T00001 = CALL	$printf	,1
+	RETURN	0

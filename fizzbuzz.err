@@ -1,0 +1,70 @@
+AST Dump for function main
+LIST(
+ FOR
+ INIT:
+  ASSIGNMENT
+   stab_var name=i def @fizzbuzz.c:2
+   CONSTANT: (type=int) 0
+ COND:
+  BINARY OP <
+   stab_var name=i def @fizzbuzz.c:2
+   CONSTANT: (type=int) 100
+ INCR:
+  UNARY OP POSTINC
+   stab_var name=i def @fizzbuzz.c:2
+ BODY:
+  LIST(
+   IF
+   COND:
+    BINARY OP ==
+     BINARY OP mod 
+      stab_var name=i def @fizzbuzz.c:2
+      CONSTANT: (type=int) 15
+     CONSTANT: (type=int) 0
+   BODY:
+    LIST(
+     FNCALL, 2 arguments
+      stab_fn name=printf def @fizzbuzz.c:1
+     ARGS
+       STRING: (size=20)%d is divisble by 15
+       stab_var name=i def @fizzbuzz.c:2
+    )
+   ELSE:
+    IF
+    COND:
+     BINARY OP ==
+      BINARY OP mod 
+       stab_var name=i def @fizzbuzz.c:2
+       CONSTANT: (type=int) 3
+      CONSTANT: (type=int) 0
+    BODY:
+     LIST(
+      FNCALL, 2 arguments
+       stab_fn name=printf def @fizzbuzz.c:1
+      ARGS
+        STRING: (size=21)%d is divisible by 3
+
+        stab_var name=i def @fizzbuzz.c:2
+     )
+    ELSE:
+     IF
+     COND:
+      BINARY OP ==
+       BINARY OP mod 
+        stab_var name=i def @fizzbuzz.c:2
+        CONSTANT: (type=int) 5
+       CONSTANT: (type=int) 0
+     BODY:
+      LIST(
+       FNCALL, 2 arguments
+        stab_fn name=printf def @fizzbuzz.c:1
+       ARGS
+         STRING: (size=21)%d is divisible by 5
+
+         stab_var name=i def @fizzbuzz.c:2
+      )
+     ELSE:
+  )
+ RETURN:
+  CONSTANT: (type=int) 0
+)

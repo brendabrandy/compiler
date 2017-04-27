@@ -1,12 +1,14 @@
-# 1 "hello.c"
+# 1 "hello_100.c"
 # 1 "<built-in>"
 # 1 "<command-line>"
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 1 "<command-line>" 2
-# 1 "hello.c"
+# 1 "hello_100.c"
 int printf();
-
+int i;
 int main(){
-    printf("Hello world");
+ for (i = 0 ;i < 100; i++){
+     printf("%d Hello world\n", i);
+ }
     return 0;
 }

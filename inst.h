@@ -18,4 +18,5 @@ void inst_division(int opcode, struct node* res, struct node* src1, struct node*
 void inst_two_operands(int opcode, struct node* res, struct node* src1, struct node* src2);
 void inst_print_vars(struct node* n);
 void inst_return(struct node* n);
+void inst_cmp(struct node* src1, struct node* src2);
 void inst_jump(int opcode, char* false_inst, char* true_inst, struct bblock* false_arm, struct bblock* true_arm);
