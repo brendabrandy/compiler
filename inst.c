@@ -64,7 +64,8 @@ void inst_func_prologue(){
 void inst_mov(int opcode, struct node* res, struct node* src1){
     fprintf(stdout,"\tmovl\t");
     inst_print_vars(src1);
-    fprintf(stdout,", ");
+	fprintf(stdout,", %%ecx\n");
+	fprintf(stdout,"\tmovl\t%%ecx, ");
     inst_print_vars(res);
     fprintf(stdout,"\n");
 }
@@ -220,18 +221,27 @@ void inst_print_vars(struct node* n){
     switch(n->flag){
         case I_VAR_NODE:
             // get the offset
-            if (n->ast_node.var_node.stg == T_AUTO)
-                fprintf(stdout,"-$%d(%%ebp)", n->ast_node.var_node.offset);
-            else if (n->ast_node.var_node.stg == T_EXTERN)
+            if (n->ast_node.var_node.stg == T_AUTO){
+				if (n->ast_node.var_node.offset == 0){
+					fprintf(stdout,"(%%ebp)");
+				}else{
+                	fprintf(stdout,"-%d(%%ebp)", n->ast_node.var_node.offset);
+				}
+            }else if (n->ast_node.var_node.stg == T_EXTERN){
                 fprintf(stdout,"%s", n->ast_node.var_node.node.name);
-            else if (n->ast_node.var_node.stg == T_STATIC)
+            }else if (n->ast_node.var_node.stg == T_STATIC){
                 fprintf(stdout,"%s.%d", n->ast_node.var_node.node.name, n->ast_node.var_node.static_count);
+			}
             break;
         case I_FN_NODE:
             fprintf(stdout,"%s", n->ast_node.fn_node.node.name);
             break;
         case T_TEMP_NODE:
-            fprintf(stdout,"-$%d(%%ebp)", n->ast_node.temp_node.offset);
+			if (n->ast_node.temp_node.offset == 0){
+				fprintf(stdout,"(%%ebp)");
+			}else{
+            	fprintf(stdout,"-%d(%%ebp)", n->ast_node.temp_node.offset);
+			}
             break;
         case E_CONSTANT:
             fprintf(stdout,"$%d", n->ast_node.constant_node.value);
@@ -262,17 +272,18 @@ void inst_cmp(struct node* src1, struct node* src2){
     fprintf(stdout,"\tmovl\t");
     inst_print_vars(src2);
     fprintf(stdout,", %%ecx\n");
-    fprintf(stdout,"\tcmp\t%%ebx, %%ecx\n");
+    fprintf(stdout,"\tcmp\t%%ecx, %%ebx\n");
 }
 
 // generates a function call
 void inst_fn_call(int opcode, struct node* res, struct node* src1, struct node* src2){
-    switch(opcode){
+    struct node* k;
+	switch(opcode){
         case QUAD_CALL:
-			fprintf(stdout,"\tsubl\t");
-			struct node* k = ast_new_const(src2->ast_node.constant_node.value*4);
-			inst_print_vars(k);
-			fprintf(stdout,", %%esp\n");
+			// fprintf(stdout,"\tsubl\t");
+			k = ast_new_const(src2->ast_node.constant_node.value*4);
+			// inst_print_vars(k);
+			// fprintf(stdout,", %%esp\n");
             fprintf(stdout,"\tcall\t");
             inst_print_vars(src1);
             fprintf(stdout,"\n");

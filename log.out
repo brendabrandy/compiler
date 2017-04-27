@@ -1,14 +1,26 @@
-AST Dump for function main
-LIST(
- FNCALL, 1 arguments
-  stab_fn name=printf def @hello.c:1
- ARGS
-   STRING: (size=13)Hello world!
-
- RETURN:
-  CONSTANT: (type=int) 0
-)
+	.section	.rodata
+.string_ro_0:
+	.string	"Hello world!\n"
+	.data
+	.align	4
+	.size	.string_0, 4
+.string_0:
+	.long	.string_ro_0
+	.text
+	.globl	main
+	.type	main,@function
+main:
+	pushl	%ebp
+	movl	%esp, %ebp
+	subl	$8, %esp
+	subl	$0, %esp
+	subl	$8, %esp
 .BB1.1:
-	ARG	0	,.string_0
-	%T00001 = CALL	$printf	,1
-	RETURN	0
+	movl	.string_0, %ecx
+	pushl	%ecx
+	call	printf
+	addl	$4, %esp
+	movl	%eax, -$0(%ebp)
+	movl	$0, %eax
+	leave
+	ret

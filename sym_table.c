@@ -362,11 +362,55 @@ struct node* insert_into_list(struct node* header, struct node* n){
 
 void inst_print_string(struct node* str_node){
     fprintf(stdout,"\t.section\t.rodata\n");
+	char* ptr;
     fprintf(stdout,".string_ro_%d:\n", str_node->ast_node.constant_node.str_count);
-    fprintf(stdout,"\t.string\t\"%s\"\n", str_node->ast_node.constant_node.str_value);
+	ptr = str_node->ast_node.constant_node.str_value;
+	fprintf(stdout,"\t.string\t\"");
+	for (int i = 0 ; i < str_node->ast_node.constant_node.str_size; i++){
+		switch(*ptr){
+			case '\0':
+				fprintf(stdout,"\\0");
+				break;
+			case '\a':
+				fprintf(stdout,"\\a");
+				break;
+			case '\b':
+				fprintf(stdout,"\\b");
+				break;
+			case '\f':
+				fprintf(stdout,"\\f");
+				break;
+			case '\n':
+				fprintf(stdout,"\\n");
+				break;
+			case '\r':
+				fprintf(stdout,"\\r");
+				break;
+			case '\t':
+				fprintf(stdout,"\\t");
+				break;
+			case '\v':
+				fprintf(stdout,"\\v");
+				break;
+			case '\'':
+				fprintf(stdout,"\'");
+				break;
+			case '\"':
+				fprintf(stdout,"\"");
+				break;
+			case '\\':
+				fprintf(stdout,"\\");
+				break;
+			default:
+				fprintf(stdout,"%c", *ptr);
+				break;
+		}
+		ptr++;
+	}
+	fprintf(stdout,"\"\n");
     fprintf(stdout,"\t.data\n");
     fprintf(stdout,"\t.align\t4\n");
-    fprintf(stdout,"\t.size\t.string_%d, %d\n", str_node->ast_node.constant_node.str_count, str_node->ast_node.constant_node.str_size);
+    fprintf(stdout,"\t.size\t.string_%d, 4\n", str_node->ast_node.constant_node.str_count);
     fprintf(stdout,".string_%d:\n", str_node->ast_node.constant_node.str_count);
     fprintf(stdout,"\t.long\t.string_ro_%d\n", str_node->ast_node.constant_node.str_count);
 }

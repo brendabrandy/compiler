@@ -830,7 +830,7 @@ void print_quad(struct quad* curr_quad){
             break;
         case QUAD_CMP: 
             fprintf(stderr,"CMP");
-            inst_fn_call(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
+            inst_cmp(curr_quad->src1, curr_quad->src2);
             break;
         case QUAD_RETURN: 
 			fprintf(stderr,"RETURN");

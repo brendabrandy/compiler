@@ -1,9 +1,9 @@
 	.section	.rodata
 .string_ro_0:
-	.string	"Hello world!"
+	.string	"Hello world!\n"
 	.data
 	.align	4
-	.size	.string_0, 13
+	.size	.string_0, 4
 .string_0:
 	.long	.string_ro_0
 	.text
@@ -18,10 +18,9 @@ main:
 .BB1.1:
 	movl	.string_0, %ecx
 	pushl	%ecx
-	subl	$4, %esp
 	call	printf
 	addl	$4, %esp
 	movl	%eax, (%ebp)
-	movl	$zero, %eax
+	movl	$0, %eax
 	leave
 	ret
