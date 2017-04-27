@@ -9,6 +9,8 @@
 #include "sym_table.h"
 struct scope_node* curr_scope; // the current scope is a global variable
 extern int line_num;
+extern int show_ast;
+extern int show_decl;
 int stack_offset;
 int static_count;
 char* fname;
@@ -333,7 +335,9 @@ struct node* insert_sym(char* name, int namespace, struct node* new_node, int ne
         }
     }
     if (namespace != N_MINIDEFS && namespace != N_TAGS){
-        //print_debug_stmt(new_sym->ast_node);
+        if (show_decl == 1){
+            print_debug_stmt(new_sym->ast_node);
+        }
     }
     return ret_val;
 }
@@ -430,8 +434,10 @@ void print_func_dump(int indent, struct node* n, struct node* ident){
         new_return = ast_new_return(NULL);
         checker->next = new_return;
     }
-    fprintf(stderr,"AST Dump for function %s\n", ident->ast_node.fn_node.node.name);
-    print_stmt(stmt,indent);
+    if (show_ast == 1){
+        fprintf(stderr,"AST Dump for function %s\n", ident->ast_node.fn_node.node.name);
+        print_stmt(stmt,indent);
+    }
 
 }
 // make the key_value map for switch statements

@@ -125,7 +125,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 21 "parse.y" /* yacc.c:1909  */
+#line 28 "parse.y" /* yacc.c:1909  */
 
         struct string_lit{
             char *ident_name;

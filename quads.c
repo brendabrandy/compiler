@@ -17,7 +17,7 @@
 // optional
 // ternary operators
 // handling structs / unions
-
+extern int show_quads;
 extern int stack_offset;
 struct node* head_temp;
 
@@ -34,7 +34,9 @@ void generate_quads(struct node* stmt, int scope, struct node* ident){
     cur_bb = new_bb();
     head_bb = cur_bb;
     gen_quads(stmt, NULL, NULL);
-    print_bb(head_bb);
+    if (show_quads == 1){
+        print_bb(head_bb);
+    }
 }
 
 void gen_quads(struct node* stmt, struct bblock* break_node, struct bblock* cont_node){
@@ -441,7 +443,8 @@ struct node*  gen_rvalue(struct node* node,struct node* target){
         int opcode = node->ast_node.binop_node.opcode;
    		int ary_size;
 		struct node* temper, *new_targ;
-		struct node* l_type, *r_type, *ar_size_node, *ptr_to;
+		struct node* l_type, *r_type, *ar_size_node;
+        struct node* ptr_to = NULL;
         left = gen_rvalue(node->ast_node.binop_node.left, NULL);
 		right = gen_rvalue(node->ast_node.binop_node.right, NULL);
 		if (left != NULL){

@@ -1,9 +1,16 @@
 %{
     #include <stdio.h>
+    #include <stdlib.h>
+    #include <unistd.h>
     #include "sym_table.h"
     extern FILE* yyin;
     extern int yyparse();
     extern int yylex();
+    int show_lex;
+    int show_decl;
+    int show_ast;
+    int show_quads;
+    int show_targetcode;
     char *fname;
     int string_count;
     int fn_counter = 0;
@@ -332,7 +339,9 @@ bitwise_xor_expr conditional_body
 
     struct_block:        field_list '}'     {$<node>0->ast_node.struct_tag_node.isComplete = 1;
                                              struct sym_node* node = curr_scope->sym_node;
-                                             //print_debug_stmt($<node>0);
+                                             if (show_decl == 1){
+                                                print_debug_stmt($<node>0);
+                                             }
                                              curr_scope = curr_scope->prev_scope;
                                              }
 
@@ -654,11 +663,41 @@ bitwise_xor_expr conditional_body
 %%
 
 int main(int argc, char* argv[]){
-    yyin = fopen(argv[1],"r");
     list = (struct node*) malloc(sizeof(struct node));
 	list->flag = LIST;
 	static_count = 0;
     string_count = 0;
+    int c;
+    show_lex = 0;
+    show_decl = 0;
+    show_ast= 0;
+    show_quads = 0;
+    show_targetcode = 0;
+    while ((c = getopt(argc, argv, "daqtl")) != -1){
+        switch(c){
+            case 'l':
+                show_lex = 1;
+                break;
+            case 'd':
+                // done
+                show_decl = 1;
+                break;
+            case 'a':
+                // done
+                show_ast = 1;
+                break;
+            case 'q':
+                // done
+                show_quads = 1;
+                break;
+            case 't':
+                show_targetcode = 1;
+                break;
+            default:
+                break;
+        }    
+    }
+    yyin = fopen(argv[optind], "r");
     do{
         yyparse();
     }while(!feof(yyin));

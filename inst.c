@@ -145,17 +145,20 @@ void inst_not_operator(struct node* res, struct node* src1){
     fprintf(stdout,"\n");
 }
 
-// mov src2, %ecx
-// div src1, %ecx
+// mov src2, %eax
+// ctld
 // mov %eax, res for division 
 // mov %edx, res for modulo
 void inst_division(int opcode, struct node* res, struct node* src1, struct node* src2){
     fprintf(stdout,"\tmovl\t");
-    inst_print_vars(src2);
-    fprintf(stdout,", %%ecx\n");
-    fprintf(stdout,"\tdivl\t");
     inst_print_vars(src1);
-    fprintf(stdout,", %%ecx");
+    fprintf(stdout,", %%eax\n");
+    fprintf(stdout,"\txor\t%%edx, %%edx\n"); // clear value in edx
+    fprintf(stdout,"\tmovl\t");
+    inst_print_vars(src2);
+    fprintf(stdout,", %%ebx\n");
+    fprintf(stdout,"\tidiv\t%%ebx\n");
+    fprintf(stdout,"\n");
     switch(opcode){
         case E_DIV:
             fprintf(stdout,"\tmovl\t%%eax, ");

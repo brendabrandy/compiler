@@ -26,7 +26,8 @@ LIST(
      FNCALL, 2 arguments
       stab_fn name=printf def @fizzbuzz.c:1
      ARGS
-       STRING: (size=20)%d is divisble by 15
+       STRING: (size=21)%d is divisble by 15
+
        stab_var name=i def @fizzbuzz.c:2
     )
    ELSE:
@@ -42,7 +43,7 @@ LIST(
       FNCALL, 2 arguments
        stab_fn name=printf def @fizzbuzz.c:1
       ARGS
-        STRING: (size=21)%d is divisible by 3
+        STRING: (size=31)%d is divisible by 3 and not 5
 
         stab_var name=i def @fizzbuzz.c:2
      )
@@ -59,7 +60,7 @@ LIST(
        FNCALL, 2 arguments
         stab_fn name=printf def @fizzbuzz.c:1
        ARGS
-         STRING: (size=21)%d is divisible by 5
+         STRING: (size=31)%d is divisible by 5 but not 3
 
          stab_var name=i def @fizzbuzz.c:2
       )
@@ -68,3 +69,48 @@ LIST(
  RETURN:
   CONSTANT: (type=int) 0
 )
+.BB1.1:
+	i{global} = MOV	0
+	BR	.BB1.4
+.BB1.4:
+	CMP	i{global}	,100
+	BRLT	.BB1.5, .BB1.2
+.BB1.2:
+	%T00001 = MOD	i{global}	,15
+	CMP	%T00001	,0
+	BREQ	.BB1.7, .BB1.6
+.BB1.6:
+	ARG	1	,i{global}
+	ARG	0	,.string_0
+	%T00002 = CALL	$printf	,2
+	BR	.BB1.8
+.BB1.8:
+	BR	.BB1.3
+.BB1.3:
+	%T00007 = MOV	i{global}
+	i{global} = ADD	i{global}	,1
+	BR	.BB1.4
+.BB1.7:
+	%T00003 = MOD	i{global}	,3
+	CMP	%T00003	,0
+	BREQ	.BB1.10, .BB1.9
+.BB1.9:
+	ARG	1	,i{global}
+	ARG	0	,.string_1
+	%T00004 = CALL	$printf	,2
+	BR	.BB1.11
+.BB1.11:
+	BR	.BB1.8
+.BB1.10:
+	%T00005 = MOD	i{global}	,5
+	CMP	%T00005	,0
+	BREQ	.BB1.13, .BB1.12
+.BB1.12:
+	ARG	1	,i{global}
+	ARG	0	,.string_2
+	%T00006 = CALL	$printf	,2
+	BR	.BB1.13
+.BB1.13:
+	BR	.BB1.11
+.BB1.5:
+	RETURN	0
