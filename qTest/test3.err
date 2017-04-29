@@ -1,0 +1,122 @@
+z is defined at test3.c:1 [in global scope starting at test3.c:1] as a 
+wrong  function returning
+  void
+ and taking unknown arugments
+a is defined at test3.c:2 [in function scope starting at test3.c:2] as a
+variable with stgclass auto of type:
+  int
+b is defined at test3.c:2 [in function scope starting at test3.c:2] as a
+variable with stgclass auto of type:
+  int
+AST Dump for function z
+LIST(
+ IF
+ COND:
+  BINARY OP <
+   stab_var name=a def @test3.c:2
+   stab_var name=b def @test3.c:2
+ BODY:
+  ASSIGNMENT
+   stab_var name=a def @test3.c:2
+   CONSTANT: (type=int) 1
+ ELSE:
+ IF
+ COND:
+  BINARY OP !=
+   stab_var name=b def @test3.c:2
+   stab_var name=a def @test3.c:2
+ BODY:
+  ASSIGNMENT
+   stab_var name=b def @test3.c:2
+   CONSTANT: (type=int) 3
+ ELSE:
+  ASSIGNMENT
+   stab_var name=a def @test3.c:2
+   CONSTANT: (type=int) 3
+ RETURN:
+)
+.BB1.1:
+	CMP	a{lvar}	,b{lvar}
+	BRLT	.BB1.3, .BB1.2
+.BB1.2:
+	a{lvar} = MOV	1
+	BR	.BB1.3
+.BB1.3:
+	CMP	b{lvar}	,a{lvar}
+	BRNEQ	.BB1.5, .BB1.4
+.BB1.4:
+	b{lvar} = MOV	3
+	BR	.BB1.6
+.BB1.6:
+	RETURN
+.BB1.5:
+	a{lvar} = MOV	3
+	BR	.BB1.6
+main is defined at test3.c:13 [in global scope starting at test3.c:1] as a 
+wrong  function returning
+  void
+ and taking unknown arugments
+a is defined at test3.c:14 [in function scope starting at test3.c:14] as a
+variable with stgclass auto of type:
+  int
+b is defined at test3.c:14 [in function scope starting at test3.c:14] as a
+variable with stgclass auto of type:
+  int
+c is defined at test3.c:14 [in function scope starting at test3.c:14] as a
+variable with stgclass auto of type:
+  int
+d is defined at test3.c:14 [in function scope starting at test3.c:14] as a
+variable with stgclass auto of type:
+  int
+e is defined at test3.c:14 [in function scope starting at test3.c:14] as a
+variable with stgclass auto of type:
+  int
+f is defined at test3.c:14 [in function scope starting at test3.c:14] as a
+variable with stgclass auto of type:
+  int
+g is defined at test3.c:15 [in function scope starting at test3.c:14] as a
+variable with stgclass auto of type:
+  int
+AST Dump for function main
+LIST(
+ ASSIGNMENT
+  stab_var name=g def @test3.c:15
+  CONSTANT: (type=int) 1
+ DO
+ BODY:
+  LIST(
+   UNARY OP POSTINC
+    stab_var name=g def @test3.c:15
+  )
+ COND:
+  BINARY OP ||
+   BINARY OP &&
+    BINARY OP !=
+     stab_var name=a def @test3.c:14
+     stab_var name=b def @test3.c:14
+    BINARY OP ==
+     stab_var name=c def @test3.c:14
+     stab_var name=d def @test3.c:14
+   BINARY OP <=
+    stab_var name=e def @test3.c:14
+    stab_var name=f def @test3.c:14
+ RETURN:
+)
+.BB2.1:
+	g{lvar} = MOV	1
+	BR	.BB2.2
+.BB2.2:
+	%T00001 = MOV	g{lvar}
+	g{lvar} = ADD	g{lvar}	,1
+	BR	.BB2.3
+.BB2.3:
+	CMP	a{lvar}	,b{lvar}
+	BRNEQ	.BB2.5, .BB2.6
+.BB2.6:
+	CMP	c{lvar}	,d{lvar}
+	BREQ	.BB2.5, .BB2.2
+.BB2.5:
+	CMP	e{lvar}	,f{lvar}
+	BRLE	.BB2.4, .BB2.2
+.BB2.4:
+	RETURN

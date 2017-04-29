@@ -1,0 +1,9 @@
+AST Dump for function main
+LIST(
+ FNCALL, 1 arguments
+  stab_fn name=printf def @hello.c:1
+ ARGS
+   STRING: (size=11)Hello world
+ RETURN:
+  CONSTANT: (type=int) 0
+)

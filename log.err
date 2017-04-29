@@ -1,14 +1,74 @@
-AST Dump for function main
+a is defined at Brenda_ParserTest/complete_test.c:1 [in global scope starting at Brenda_ParserTest/complete_test.c:1] as a
+variable with stgclass extern of type:
+  int
+f is defined at Brenda_ParserTest/complete_test.c:2 [in global scope starting at Brenda_ParserTest/complete_test.c:1] as a 
+wrong  function returning
+  int
+ and taking unknown arugments
+b is defined at Brenda_ParserTest/complete_test.c:3 [in function scope starting at Brenda_ParserTest/complete_test.c:3] as a
+variable with stgclass auto of type:
+  int
+c is defined at Brenda_ParserTest/complete_test.c:3 [in function scope starting at Brenda_ParserTest/complete_test.c:3] as a
+variable with stgclass auto of type:
+  int
+z is defined at Brenda_ParserTest/complete_test.c:3 [in function scope starting at Brenda_ParserTest/complete_test.c:3] as a 
+wrong  function returning
+  int
+ and taking unknown arugments
+AST Dump for function f
 LIST(
- FNCALL, 1 arguments
-  stab_fn name=printf def @hello.c:1
- ARGS
-   STRING: (size=13)Hello world!
-
+ ASSIGNMENT
+  stab_var name=c def @Brenda_ParserTest/complete_test.c:3
+  CONSTANT: (type=int) 1
+ FOR
+ INIT:
+  ASSIGNMENT
+   stab_var name=a def @Brenda_ParserTest/complete_test.c:1
+   CONSTANT: (type=int) 1
+ COND:
+  BINARY OP <
+   stab_var name=a def @Brenda_ParserTest/complete_test.c:1
+   stab_var name=b def @Brenda_ParserTest/complete_test.c:3
+ INCR:
+  UNARY OP POSTINC
+   stab_var name=a def @Brenda_ParserTest/complete_test.c:1
+ BODY:
+  LIST(
+   IF
+   COND:
+    BINARY OP <
+     stab_var name=c def @Brenda_ParserTest/complete_test.c:3
+     stab_var name=a def @Brenda_ParserTest/complete_test.c:1
+   BODY:
+    LIST(
+     FNCALL, 1 arguments
+      stab_fn name=z def @Brenda_ParserTest/complete_test.c:3
+     ARGS
+       stab_var name=a def @Brenda_ParserTest/complete_test.c:1
+    )
+   ELSE:
+  )
  RETURN:
-  CONSTANT: (type=int) 0
 )
 .BB1.1:
-	ARG	0	,.string_0
-	%T00001 = CALL	$printf	,1
-	RETURN	0
+	c{lvar} = MOV	1
+	a{global} = MOV	1
+	BR	.BB1.4
+.BB1.4:
+	CMP	a{global}	,b{lvar}
+	BRLT	.BB1.5, .BB1.2
+.BB1.2:
+	CMP	c{lvar}	,a{global}
+	BRLT	.BB1.7, .BB1.6
+.BB1.6:
+	ARG	0	,a{global}
+	%T00001 = CALL	$z	,1
+	BR	.BB1.7
+.BB1.7:
+	BR	.BB1.3
+.BB1.3:
+	%T00002 = MOV	a{global}
+	a{global} = ADD	a{global}	,1
+	BR	.BB1.4
+.BB1.5:
+	RETURN

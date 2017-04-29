@@ -1,0 +1,33 @@
+# 1 "struct2.c"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 1 "<command-line>" 2
+# 1 "struct2.c"
+
+
+
+struct s1 {
+ int a;
+};
+
+
+void f(){
+ struct s1;
+ struct s2 {
+  struct s1 *p1;
+ } s2;
+ struct s3 {
+  struct s2 *p2;
+  struct s1 {
+   double d;
+  } *p1;
+ } s3;
+ {
+  struct s1 {
+   float f;
+  } s1;
+ }
+
+ struct s1 s1;
+}

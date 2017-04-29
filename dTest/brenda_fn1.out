@@ -1,0 +1,19 @@
+f is defined at pTest/fn1.c:1 [in global scope starting at pTest/fn1.c:1] as a 
+extern  function returning
+  int
+ and taking unknown arugments
+j is defined at pTest/fn1.c:3 [in global scope starting at pTest/fn1.c:1] as a
+variable with stgclass extern of type:
+  double
+j is defined at pTest/fn1.c:5 [in block scope starting at pTest/fn1.c:4] as a
+variable with stgclass auto of type:
+  int
+h is defined at pTest/fn1.c:8 [in global scope starting at pTest/fn1.c:1] as a 
+extern  function returning
+  int
+ and taking the following arugments
+  int
+  char
+h is defined at pTest/fn1.c:9 [in function scope starting at pTest/fn1.c:9] as a
+variable with stgclass auto of type:
+  int

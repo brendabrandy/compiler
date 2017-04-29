@@ -1,7 +1,7 @@
 // Name : Brenda So
 // Date : 03/04/2017
-// Goal : Make a symbol table that supports create, destroy, lookup and: insertion
-// NOTE : what if i have a symbol that has a scope in itself? e.g. functions
+// Goal : Make a symbol table that supports create, destroy, lookup and insertion of symbols 
+//        for each scope.
 
 #include <stdio.h>
 #include <string.h>
@@ -11,12 +11,15 @@ struct scope_node* curr_scope; // the current scope is a global variable
 extern int line_num;
 extern int show_ast;
 extern int show_decl;
+extern int show_targetcode;
+extern int show_ast;
 int stack_offset;
 int static_count;
 char* fname;
 void inst_local_directive(char* directive, int stat_count);
 void inst_comm_directive(char* name, int size, int alignment, int stat_count);
-// creates a symbol table, returns pointer to symbol table
+
+// This function creates a symbol table, returns pointer to symbol table
 void create_sym_table(char *name, int num){
     // create head node
     struct scope_node* header;
@@ -140,10 +143,12 @@ struct node* ident_var_type(struct node* ident_node, int* isExtern){
     struct node* n = ident_node->next;
     struct node* first_node = n;
     struct sym_node* next_node;
+    struct node* tracker;
     int offset = 0;
     if (curr_scope->scope_num == S_STRUCTUNION){
         // if the current scope is within a struct and union, make it a member node
         new_node->ast_node.member_node.node = ident_node->ast_node.common_node;
+        new_node->next = ident_node->next;
         new_node->ast_node.member_node.offset = 0;
         new_node->ast_node.member_node.width = 0;
         new_node->ast_node.member_node.bit_offset = 0;
@@ -178,10 +183,12 @@ struct node* ident_var_type(struct node* ident_node, int* isExtern){
     }else if(n->flag == T_PTR_NODE){
         n = n->ast_node.ptr_node.ptr_to_node;
     }else if(n->flag == T_ARY_NODE){
+        fprintf(stderr,"[ident_var_node]: size of array is %d\n", n->ast_node.ary_node.ary_size);
         n = n->ast_node.ary_node.type;
     }else if (n->flag == I_STRUCT_TAG_NODE || n->flag == I_UNION_TAG_NODE){
         new_node->ast_node.var_node.node = ident_node->ast_node.common_node;
         new_node->flag = I_VAR_NODE;
+        new_node->next = first_node;
         if (n->next != NULL){
             n = n->next;
             if (n->flag == T_SCALAR_NODE){
@@ -211,9 +218,9 @@ struct node* ident_var_type(struct node* ident_node, int* isExtern){
             n->ast_node.scalar_node.stg_class = 0;
         }else{
             if (strcmp(curr_scope->name,"global") == 0){
-                new_node->ast_node.var_node.stg = T_EXTERN;
+                new_node->ast_node.fn_node.stg = T_EXTERN;
             }else{
-                new_node->ast_node.var_node.stg = T_AUTO;
+                new_node->ast_node.fn_node.stg = T_AUTO;
             }
         }
         new_node->ast_node.fn_node.inline_spec = n->ast_node.scalar_node.inline_spec;
@@ -227,9 +234,8 @@ struct node* ident_var_type(struct node* ident_node, int* isExtern){
     return new_node;
 }
 
-//insert a symbol into the symbol table
-// zero means insert / update successful
-// -1 means error!
+// insert a symbol into the symbol table, returns null if insertion fails, and returns newly inserted
+// ast node if insertion is successful
 // the argument new_def is a boolean variable to determine whether if a variable with the same name and namespace already exist in the symbol table, to replace the definition (0) or to return an error (1)
 
 struct node* insert_sym(char* name, int namespace, struct node* new_node, int new_def){
@@ -238,12 +244,23 @@ struct node* insert_sym(char* name, int namespace, struct node* new_node, int ne
     struct scope_node* insert_scope;
     struct node* corrected_node;
 	int s_offset, *isExtern;
+    struct node* tracker;
+    tracker = new_node;
     struct node* existing_node, *existing_node_arg, *new_node_arg;
     if (curr_scope == NULL){
         create_sym_table("global", 0);
     }
     if (new_node->flag == I_NODE){
         corrected_node = ident_var_type(new_node, isExtern);
+        tracker = corrected_node;
+        if (tracker->next->flag == T_ARY_NODE){
+            tracker = tracker->next;
+            while (tracker != NULL){
+                fprintf(stderr,"tracker's number is %d\n", tracker->ast_node.ary_node.ary_size);
+                tracker = tracker->ast_node.ary_node.type;
+            }
+        }
+
 		if (corrected_node->flag == I_VAR_NODE){
 			// if it is a global variable
             s_offset = offset_inc(corrected_node);
@@ -251,13 +268,16 @@ struct node* insert_sym(char* name, int namespace, struct node* new_node, int ne
                 // if it is a static variable
                 corrected_node->ast_node.var_node.static_count = static_count;
                 static_count += 1; 
-                inst_local_directive(name, corrected_node->ast_node.var_node.static_count);
-                inst_comm_directive(name, s_offset, s_offset, corrected_node->ast_node.var_node.static_count);
-
+                if (show_targetcode == 1){
+                    inst_local_directive(name, corrected_node->ast_node.var_node.static_count);
+                    inst_comm_directive(name, s_offset, s_offset, corrected_node->ast_node.var_node.static_count);
+                }
             }else if (*isExtern != 1 && corrected_node->ast_node.var_node.stg == T_EXTERN){
                 // if it is a global variable but not an extern global variable
                 corrected_node->ast_node.var_node.static_count = -1;
-				inst_comm_directive(name, s_offset, s_offset, -1);
+				if (show_targetcode == 1){
+                    inst_comm_directive(name, s_offset, s_offset, -1);
+                }
 			}else{
                 // if it is a local variable, make room for it on the stack
                 corrected_node->ast_node.var_node.static_count = -1;
@@ -342,6 +362,7 @@ struct node* insert_sym(char* name, int namespace, struct node* new_node, int ne
     return ret_val;
 }
 
+// enters a newly made block scope
 void enter_block(struct node* n, int num){
     if (n != NULL && n->flag == I_FN_NODE){
         create_sym_table(n->ast_node.fn_node.node.name, num);
@@ -351,10 +372,12 @@ void enter_block(struct node* n, int num){
     return;
 }
 
+// destroys symbol table as we leave each block
 void leave_block(){
     destroy_sym_table();
 }
 
+// inserts a node 
 struct node* insert_into_list(struct node* header, struct node* n){
     struct node* stmt = header;
     while (stmt->next != NULL){
@@ -364,7 +387,11 @@ struct node* insert_into_list(struct node* header, struct node* n){
     return header;
 }
 
+// prints out necessary assembly for string, deactivated if
+// show_targecode == 0
+
 void inst_print_string(struct node* str_node){
+    if (show_targetcode == 1){
     fprintf(stdout,"\t.section\t.rodata\n");
 	char* ptr;
     fprintf(stdout,".string_ro_%d:\n", str_node->ast_node.constant_node.str_count);
@@ -417,8 +444,10 @@ void inst_print_string(struct node* str_node){
     fprintf(stdout,"\t.size\t.string_%d, 4\n", str_node->ast_node.constant_node.str_count);
     fprintf(stdout,".string_%d:\n", str_node->ast_node.constant_node.str_count);
     fprintf(stdout,"\t.long\t.string_ro_%d\n", str_node->ast_node.constant_node.str_count);
+    }
 }
 
+// print out a dump for the function
 void print_func_dump(int indent, struct node* n, struct node* ident){
     struct node* stmt = n;
     struct node* checker, *new_return;
@@ -486,9 +515,9 @@ void make_switch_map(struct node* switch_body, struct node* stmt){
                 break;
             case ST_DEFAULT:
                 m = (struct node*) malloc(sizeof(struct node));
-                m->ast_node.switch_map.const_expr = n->ast_node.case_node.const_expr;
+                m->ast_node.switch_map.const_expr = NULL;
                 m->ast_node.switch_map.case_stmt = n->ast_node.case_node.stmt;
-                m->flag = SWITCH_MAP;
+                m->flag = SWITCH_MAP_DEFAULT;
                 // add a map node
                 while (switch_body_stmt->next != NULL){
                     switch_body_stmt = switch_body_stmt->next;
@@ -508,14 +537,12 @@ void make_switch_map(struct node* switch_body, struct node* stmt){
         }
     }
     return;
-    //recursively go down the statement tree
-    //if we see a case label
-    //add a struct node
 }
 
+// prints out the ast dump for a statement, allows us to recursively go down an AST tree
 void print_stmt(struct node* stmt, int indent){
 
-    char * indentation;
+    char * indentation, *ptr;
     indentation = (char*) malloc(sizeof(char)*indent+1);
     for (int i = 0 ; i < indent-1; i++){
         indentation[i] = ' ';
@@ -586,6 +613,9 @@ void print_stmt(struct node* stmt, int indent){
                 print_stmt(stmt->ast_node.switch_node.label_maps,indent+1);
                 fprintf(stderr,"%sBODY:\n",indentation);
                 print_stmt(stmt->ast_node.switch_node.stmt,indent+1);
+                break;
+            case SWITCH_MAP_DEFAULT:
+                fprintf(stderr,"%sDEFAULT\n", indentation);
                 break;
             case SWITCH_MAP:
                 if (stmt->ast_node.switch_map.const_expr->flag == E_CONSTANT){
@@ -695,7 +725,51 @@ void print_stmt(struct node* stmt, int indent){
                         stmt->ast_node.constant_node.char_value);
                 break;
             case E_STR:
-                fprintf(stderr,"%sSTRING: (size=%d)%s\n", indentation, stmt->ast_node.constant_node.str_size, stmt->ast_node.constant_node.str_value);
+                fprintf(stderr,"%sSTRING: (size=%d)", indentation, stmt->ast_node.constant_node.str_size);
+                ptr = stmt->ast_node.constant_node.str_value;
+            	for (int i = 0 ; i < stmt->ast_node.constant_node.str_size; i++){
+		            switch(*ptr){
+			            case '\0':
+				            fprintf(stderr,"\\0");
+				            break;
+            			case '\a':
+	       	        		fprintf(stderr,"\\a");
+		    		        break;
+        	    		case '\b':
+		            		fprintf(stderr,"\\b");
+				            break;
+            			case '\f':
+	    	        		fprintf(stderr,"\\f");
+		    		        break;
+        	    		case '\n':
+		            		fprintf(stderr,"\\n");
+				            break;
+            			case '\r':
+	    	        		fprintf(stderr,"\\r");
+		    		        break;
+        	    		case '\t':
+		            		fprintf(stderr,"\\t");
+				            break;
+            			case '\v':
+	    	        		fprintf(stderr,"\\v");
+		    		        break;
+        	    		case '\'':
+		            		fprintf(stderr,"\'");
+				            break;
+               			case '\"':
+	    	        		fprintf(stderr,"\"");
+		    		        break;
+        	    		case '\\':
+		            		fprintf(stderr,"\\");
+				            break;
+			            default:
+				            fprintf(stderr,"%c", *ptr);
+				            break;
+		            }
+		            ptr++;
+	            }
+
+                fprintf(stderr,"\n");
                 break;
 			case E_LIST:
 				print_stmt(stmt->ast_node.elist_node.ptr_to_arg, indent+1);
@@ -710,10 +784,11 @@ void print_stmt(struct node* stmt, int indent){
             stmt = NULL;
         }
     }
-    free(indentation);
+    // free(indentation);
 }
 
-int offset_inc(struct node* n){
+// manipulates global offset and increase offset depending on the necessary space
+int offset_inc(struct node* n){ 
 	if (n->flag == I_VAR_NODE){
 		return offset_inc(n->next);
 	}else if (n->flag == T_ARY_NODE){
@@ -731,6 +806,7 @@ int offset_inc(struct node* n){
 	return 0;
 }
 
+// print debug statements for declaration on the symbol table
 void print_debug_stmt(struct node* n){
     struct node* c, *rets, *args;
     struct sym_node* curr_sym_node;
@@ -765,6 +841,7 @@ void print_debug_stmt(struct node* n){
     }else if (c->flag == I_FN_NODE){
         switch(c->ast_node.fn_node.stg){
             case T_EXTERN:  s = "extern";   break;
+            case T_AUTO:    s = "local";     break;
             case T_STATIC:  s = "static";   break;
             default:        s = "wrong";    break;
         }
@@ -835,6 +912,7 @@ void print_debug_stmt(struct node* n){
     
 }
 
+// print the type of variable in symbol table
 void print_type(struct node* c){
     struct node* next_ptr = c;
     int len = 2;

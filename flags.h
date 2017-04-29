@@ -108,6 +108,7 @@
 #define ST_CASE     510
 #define ST_DEFAULT  511
 #define SWITCH_MAP  512
+#define SWITCH_MAP_DEFAULT  513
 
 #define LIST        600
 

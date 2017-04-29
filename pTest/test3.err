@@ -1,0 +1,107 @@
+f is defined at pTest/test3.c:1 [in global scope starting at pTest/test3.c:1] as a 
+wrong  function returning
+  int
+ and taking unknown arugments
+a is defined at pTest/test3.c:2 [in function scope starting at pTest/test3.c:2] as a
+variable with stgclass auto of type:
+  int
+remainder is defined at pTest/test3.c:3 [in function scope starting at pTest/test3.c:2] as a
+variable with stgclass auto of type:
+  int
+rem0 is defined at pTest/test3.c:4 [in function scope starting at pTest/test3.c:2] as a
+variable with stgclass auto of type:
+  int
+rem1 is defined at pTest/test3.c:4 [in function scope starting at pTest/test3.c:2] as a
+variable with stgclass auto of type:
+  int
+rem2 is defined at pTest/test3.c:4 [in function scope starting at pTest/test3.c:2] as a
+variable with stgclass auto of type:
+  int
+AST Dump for function f
+LIST(
+ ASSIGNMENT
+  stab_var name=rem0 def @pTest/test3.c:4
+  CONSTANT: (type=int) 0
+ ASSIGNMENT
+  stab_var name=rem1 def @pTest/test3.c:4
+  CONSTANT: (type=int) 0
+ ASSIGNMENT
+  stab_var name=rem2 def @pTest/test3.c:4
+  CONSTANT: (type=int) 0
+ FOR
+ INIT:
+  ASSIGNMENT
+   stab_var name=a def @pTest/test3.c:2
+   CONSTANT: (type=int) 0
+ COND:
+  BINARY OP <
+   stab_var name=a def @pTest/test3.c:2
+   CONSTANT: (type=int) 100
+ INCR:
+  UNARY OP POSTINC
+   stab_var name=a def @pTest/test3.c:2
+ BODY:
+  LIST(
+   ASSIGNMENT
+    stab_var name=remainder def @pTest/test3.c:3
+    BINARY OP mod 
+     stab_var name=a def @pTest/test3.c:2
+     CONSTANT: (type=int) 2
+   SWITCH:
+   COND:
+    stab_var name=remainder def @pTest/test3.c:3
+   LABEL MAP:
+    CASE 0
+    CASE 1
+    DEFAULT
+   BODY:
+    LIST(
+     CASE:
+     COND:
+      CONSTANT: (type=int) 0
+     STMT:
+      ASSIGNMENT
+       stab_var name=rem0 def @pTest/test3.c:4
+       BINARY OP +
+        stab_var name=rem0 def @pTest/test3.c:4
+        CONSTANT: (type=int) 1
+     BREAK
+     CASE:
+     COND:
+      CONSTANT: (type=int) 1
+     STMT:
+      ASSIGNMENT
+       stab_var name=rem1 def @pTest/test3.c:4
+       BINARY OP +
+        stab_var name=rem1 def @pTest/test3.c:4
+        CONSTANT: (type=int) 1
+     DEFAULT:
+     STMT:
+      ASSIGNMENT
+       stab_var name=rem2 def @pTest/test3.c:4
+       BINARY OP +
+        stab_var name=rem2 def @pTest/test3.c:4
+        CONSTANT: (type=int) 1
+     BREAK
+    )
+  )
+ RETURN:
+)
+.BB1.1:
+	rem0{lvar} = MOV	0
+	rem1{lvar} = MOV	0
+	rem2{lvar} = MOV	0
+	a{lvar} = MOV	0
+	BR	.BB1.4
+.BB1.4:
+	CMP	a{lvar}	,100
+	BRLT	.BB1.5, .BB1.2
+.BB1.2:
+	remainder{lvar} = MOD	a{lvar}	,2
+	BR	.BB1.3
+.BB1.3:
+	%T00001 = MOV	a{lvar}
+	a{lvar} = ADD	a{lvar}	,1
+	BR	.BB1.4
+.BB1.5:
+	RETURN

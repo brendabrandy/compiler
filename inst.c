@@ -1,19 +1,13 @@
 #include <stdio.h>
 #include "inst.h"
 #include "flags.h"
-// are we assuming the user declares all vars first?
-// how to determine padding?
-// can we just print to stdout?
-// NOTE : Need to support string literals to support printf
-// NOTE : Do we need to make directives for implicit global vars?
-// QUES : How do we determine the padding?
-// NOTE : when we say something like int a = 'c' , do we promote char to int?
-
 extern int stack_offset;
-
+extern int show_targetcode;
 // prints the name of the label
 void inst_label(char* name){
+    if (show_targetcode == 1){
 	fprintf(stdout,"%s:\n", name);
+    }
 	return;
 }
 
@@ -62,17 +56,20 @@ void inst_func_prologue(){
 }
 
 void inst_mov(int opcode, struct node* res, struct node* src1){
+    if (show_targetcode == 1){
     fprintf(stdout,"\tmovl\t");
     inst_print_vars(src1);
 	fprintf(stdout,", %%ecx\n");
 	fprintf(stdout,"\tmovl\t%%ecx, ");
     inst_print_vars(res);
     fprintf(stdout,"\n");
+    }
 }
 
 
 void access_mem(int opcode, struct node* addr, struct node* reg){
-	switch(opcode){
+	if (show_targetcode == 1){
+    switch(opcode){
 		case QUAD_LOAD:
 			// the form will be in reg = LOAD [addr]
             // leal addr %ecx
@@ -108,6 +105,7 @@ void access_mem(int opcode, struct node* addr, struct node* reg){
 			fprintf(stdout,"\n");
 			break;
 	}	
+    }
 }
 
 // generates assembly for quads expression like res = OPCODE src1
@@ -116,6 +114,7 @@ void access_mem(int opcode, struct node* addr, struct node* reg){
 // OPCODE %ecx
 // mov %ecx, res
 void inst_one_operand(int opcode, struct node* res, struct node* src1){
+    if (show_targetcode == 1){
     fprintf(stdout,"\tmovl\t");
     inst_print_vars(src1);
     fprintf(stdout,", %%ecx\n\t");
@@ -130,10 +129,12 @@ void inst_one_operand(int opcode, struct node* res, struct node* src1){
     fprintf(stdout,"\t%%ecx\n\tmovl\t%%ecx, ");
     inst_print_vars(res);
     fprintf(stdout,"\n");
+    }
     
 }
 
 void inst_not_operator(struct node* res, struct node* src1){
+    if (show_targetcode == 1){
     fprintf(stdout,"\tmovl\t");
     inst_print_vars(src1);
     fprintf(stdout,", %%eax\n");
@@ -143,6 +144,7 @@ void inst_not_operator(struct node* res, struct node* src1){
     fprintf(stdout,"\tmovl\t%%eax, ");
     inst_print_vars(res);
     fprintf(stdout,"\n");
+    }
 }
 
 // mov src2, %eax
@@ -150,6 +152,7 @@ void inst_not_operator(struct node* res, struct node* src1){
 // mov %eax, res for division 
 // mov %edx, res for modulo
 void inst_division(int opcode, struct node* res, struct node* src1, struct node* src2){
+    if (show_targetcode == 1){
     fprintf(stdout,"\tmovl\t");
     inst_print_vars(src1);
     fprintf(stdout,", %%eax\n");
@@ -169,6 +172,7 @@ void inst_division(int opcode, struct node* res, struct node* src1, struct node*
     }
     inst_print_vars(res);
     fprintf(stdout,"\n");
+    }
 }
 
 
@@ -178,6 +182,7 @@ void inst_division(int opcode, struct node* res, struct node* src1, struct node*
 // OPCODE src1, %ecx
 // mov %ecx, res 
 void inst_two_operands(int opcode, struct node* res, struct node* src1, struct node* src2){
+    if (show_targetcode == 1){
     // print mov src2, %ecx
     fprintf(stdout,"\tmovl\t");
     inst_print_vars(src2);
@@ -200,7 +205,7 @@ void inst_two_operands(int opcode, struct node* res, struct node* src1, struct n
             fprintf(stdout,"xorl");
             break;
 		case E_MUL:
-			fprintf(stdout,"imull");
+			fprintf(stdout,"imul");
 			break;
         case E_AND:
             fprintf(stdout,"andl");
@@ -217,10 +222,12 @@ void inst_two_operands(int opcode, struct node* res, struct node* src1, struct n
     fprintf(stdout,"\tmovl\t%%ecx, ");
     inst_print_vars(res);
     fprintf(stdout,"\n");
+    }
 }
 
 void inst_print_vars(struct node* n){
     // what if it's an arugment?
+    if (show_targetcode == 1){
     switch(n->flag){
         case I_VAR_NODE:
             // get the offset
@@ -253,10 +260,12 @@ void inst_print_vars(struct node* n){
             fprintf(stdout,".string_%d", n->ast_node.constant_node.str_count);
             break;
     }
+    }
 }
 
 // generates assembly for branching
 void inst_jump(int opcode, char* false_inst, char* true_inst, struct bblock* false_arm, struct bblock* true_arm){
+    if (show_targetcode == 1){
 	switch(opcode){
 		case QUAD_BR:
 			fprintf(stdout, "\t%s\t.BB%d.%d\n", false_inst, false_arm->fn_count, false_arm->bb_count);
@@ -266,9 +275,11 @@ void inst_jump(int opcode, char* false_inst, char* true_inst, struct bblock* fal
 			fprintf(stdout, "\t%s\t.BB%d.%d\n", true_inst, true_arm->fn_count, true_arm->bb_count);
 			break;
 	};
+    }
 }
 
 void inst_cmp(struct node* src1, struct node* src2){
+    if (show_targetcode == 1){
     fprintf(stdout,"\tmovl\t");
     inst_print_vars(src1);
     fprintf(stdout,", %%ebx\n");
@@ -276,12 +287,14 @@ void inst_cmp(struct node* src1, struct node* src2){
     inst_print_vars(src2);
     fprintf(stdout,", %%ecx\n");
     fprintf(stdout,"\tcmp\t%%ecx, %%ebx\n");
+    }
 }
 
 // generates a function call
 void inst_fn_call(int opcode, struct node* res, struct node* src1, struct node* src2){
     struct node* k;
-	switch(opcode){
+	if (show_targetcode == 1){
+    switch(opcode){
         case QUAD_CALL:
 			// fprintf(stdout,"\tsubl\t");
 			k = ast_new_const(src2->ast_node.constant_node.value*4);
@@ -306,9 +319,11 @@ void inst_fn_call(int opcode, struct node* res, struct node* src1, struct node* 
 			fprintf(stdout,"\tpushl\t%%ecx\n");
 			break;
     }
+    }
 }
 
 void inst_return(struct node* n){
+    if (show_targetcode == 1){
     if (n != NULL){
         fprintf(stdout, "\tmovl\t");
         inst_print_vars(n);
@@ -316,5 +331,6 @@ void inst_return(struct node* n){
     }
 	fprintf(stdout,"\tleave\n");
 	fprintf(stdout,"\tret\n");
+    }
 	return;
 }

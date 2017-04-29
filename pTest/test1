@@ -1,0 +1,16 @@
+# 1 "pTest/test1.c"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 1 "<command-line>" 2
+# 1 "pTest/test1.c"
+int a;
+int f(){
+ int b,c,z();
+    c = 1;
+ for (a=1;a<b;a++){
+  if (c < a){
+            z(a);
+        }
+ }
+}

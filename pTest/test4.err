@@ -1,0 +1,60 @@
+a is defined at pTest/test4.c:1 [in global scope starting at pTest/test4.c:1] as a
+variable with stgclass extern of type:
+  int
+z is defined at pTest/test4.c:2 [in global scope starting at pTest/test4.c:1] as a 
+wrong  function returning
+  int
+ and taking unknown arugments
+AST Dump for function z
+LIST(
+ ASSIGNMENT
+  stab_var name=a def @pTest/test4.c:1
+  BINARY OP +
+   stab_var name=a def @pTest/test4.c:1
+   CONSTANT: (type=int) 1
+ RETURN:
+)
+.BB1.1:
+	a{global} = ADD	a{global}	,1
+	RETURN
+main is defined at pTest/test4.c:6 [in global scope starting at pTest/test4.c:1] as a 
+wrong  function returning
+  int
+ and taking unknown arugments
+AST Dump for function main
+LIST(
+ ASSIGNMENT
+  stab_var name=a def @pTest/test4.c:1
+  CONSTANT: (type=int) 10
+ LABEL:
+ NAME:LOOP
+ STMT:
+  DO
+  BODY:
+   LIST(
+    IF
+    COND:
+     BINARY OP ==
+      stab_var name=a def @pTest/test4.c:1
+      CONSTANT: (type=int) 15
+    BODY:
+     LIST(
+      FNCALL, 0 arguments
+       stab_fn name=z def @pTest/test4.c:2
+      ARGS
+      GOTO LOOP
+     )
+    ELSE:
+    UNARY OP POSTINC
+     stab_var name=a def @pTest/test4.c:1
+   )
+  COND:
+   BINARY OP <
+    stab_var name=a def @pTest/test4.c:1
+    CONSTANT: (type=int) 20
+ RETURN:
+  CONSTANT: (type=int) 0
+)
+.BB2.1:
+	a{global} = MOV	10
+	RETURN	0

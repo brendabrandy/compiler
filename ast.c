@@ -67,6 +67,7 @@ struct node* ast_add_scalar_type(struct node* n, int scalar_type){
 struct node* ast_new_ident(char *name, int type){
     char * c_fname;
     struct node* n = (struct node*) malloc(sizeof(struct node));
+    n->next = NULL;
     c_fname = (char*) malloc(4096*sizeof(char));
     strcpy(c_fname, fname);
     if (type == I_NODE){
@@ -100,7 +101,6 @@ struct node* add_type_node(struct node* ident_node, struct node* type_node){
         if (type_node->flag == T_SCALAR_NODE){
             if (type_node->ast_node.scalar_node.type == 0){
                 type_node->ast_node.scalar_node.type = T_INT;
-                type_node->ast_node.scalar_node.type = T_INT;
             }
         }
         while (last_node != NULL){
@@ -120,6 +120,7 @@ struct node* add_type_node(struct node* ident_node, struct node* type_node){
                 }
             }else if (last_node->flag == T_ARY_NODE){
                 if (last_node->ast_node.ary_node.type != NULL){
+                    fprintf(stderr,"Recursing down ary node\n");
                     last_node = last_node->ast_node.ary_node.type;
                 }else{
                     last_node->ast_node.ary_node.type = type_node;
@@ -130,6 +131,7 @@ struct node* add_type_node(struct node* ident_node, struct node* type_node){
             }
         }
     }
+
     return ident_node;
 }
 
@@ -173,6 +175,7 @@ struct node* ast_func_add_arg(struct node* first_arg, struct node* current_arg){
 struct node* ast_new_ary(int size){
     struct node* ary_node = (struct node*) malloc(sizeof(struct node));
     ary_node->ast_node.ary_node.ary_size = size;
+    ary_node->ast_node.ary_node.type = NULL;
     ary_node->flag = T_ARY_NODE;
     return ary_node;
 }

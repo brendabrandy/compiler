@@ -1,0 +1,76 @@
+	.text
+	.globl	z
+	.type	z,@function
+z:
+	pushl	%ebp
+	movl	%esp, %ebp
+	subl	$8, %esp
+	subl	$8, %esp
+.BB1.1:
+	movl	(%ebp), %ebx
+	movl	-4(%ebp), %ecx
+	cmp	%ecx, %ebx
+	jnl	.BB1.3
+	jl	.BB1.2
+.BB1.2:
+	movl	$1, %ecx
+	movl	%ecx, (%ebp)
+	jmp	.BB1.3
+.BB1.3:
+	movl	-4(%ebp), %ebx
+	movl	(%ebp), %ecx
+	cmp	%ecx, %ebx
+	je	.BB1.5
+	jne	.BB1.4
+.BB1.4:
+	movl	$3, %ecx
+	movl	%ecx, -4(%ebp)
+	jmp	.BB1.6
+.BB1.6:
+	leave
+	ret
+.BB1.5:
+	movl	$3, %ecx
+	movl	%ecx, (%ebp)
+	jmp	.BB1.6
+	.text
+	.globl	main
+	.type	main,@function
+main:
+	pushl	%ebp
+	movl	%esp, %ebp
+	subl	$8, %esp
+	subl	$28, %esp
+	subl	$12, %esp
+.BB2.1:
+	movl	$1, %ecx
+	movl	%ecx, -24(%ebp)
+	jmp	.BB2.2
+.BB2.2:
+	movl	-24(%ebp), %ecx
+	movl	%ecx, -28(%ebp)
+	movl	$1, %ecx
+	addl	-24(%ebp), %ecx
+	movl	%ecx, -24(%ebp)
+	jmp	.BB2.3
+.BB2.3:
+	movl	(%ebp), %ebx
+	movl	-4(%ebp), %ecx
+	cmp	%ecx, %ebx
+	je	.BB2.5
+	jne	.BB2.6
+.BB2.6:
+	movl	-8(%ebp), %ebx
+	movl	-12(%ebp), %ecx
+	cmp	%ecx, %ebx
+	jne	.BB2.5
+	je	.BB2.2
+.BB2.5:
+	movl	-16(%ebp), %ebx
+	movl	-20(%ebp), %ecx
+	cmp	%ecx, %ebx
+	jnle	.BB2.4
+	jle	.BB2.2
+.BB2.4:
+	leave
+	ret

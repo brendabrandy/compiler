@@ -1,0 +1,52 @@
+g is defined at test5.c:1 [in global scope starting at test5.c:1] as a 
+wrong  function returning
+  int
+ and taking the following arugments
+  int
+  int
+f is defined at test5.c:3 [in global scope starting at test5.c:1] as a 
+wrong  function returning
+  int
+ and taking unknown arugments
+a is defined at test5.c:4 [in function scope starting at test5.c:4] as a
+variable with stgclass auto of type:
+  int
+b is defined at test5.c:4 [in function scope starting at test5.c:4] as a
+variable with stgclass auto of type:
+  int
+c is defined at test5.c:4 [in function scope starting at test5.c:4] as a
+variable with stgclass auto of type:
+  int
+AST Dump for function f
+LIST(
+ ASSIGNMENT
+  stab_var name=a def @test5.c:4
+  FNCALL, 2 arguments
+   stab_fn name=g def @test5.c:1
+  ARGS
+    BINARY OP +
+     stab_var name=b def @test5.c:4
+     CONSTANT: (type=int) 3
+    CONSTANT: (type=int) 5
+ ASSIGNMENT
+  stab_var name=c def @test5.c:4
+  BINARY OP <
+   stab_var name=a def @test5.c:4
+   stab_var name=b def @test5.c:4
+ RETURN:
+)
+.BB1.1:
+	ARG	1	,5
+	%T00001 = ADD	b{lvar}	,3
+	ARG	0	,%T00001
+	a{lvar} = CALL	$g	,2
+	CMP	a{lvar}	,b{lvar}
+	BRLT	.BB1.3, .BB1.2
+.BB1.2:
+	c{lvar} = MOV	1
+	BR	.BB1.4
+.BB1.4:
+	RETURN
+.BB1.3:
+	c{lvar} = MOV	0
+	BR	.BB1.4

@@ -1,0 +1,43 @@
+	.text
+	.globl	f
+	.type	f,@function
+f:
+	pushl	%ebp
+	movl	%esp, %ebp
+	subl	$8, %esp
+	subl	$20, %esp
+	subl	$4, %esp
+.BB1.1:
+	movl	$0, %ecx
+	movl	%ecx, -8(%ebp)
+	movl	$0, %ecx
+	movl	%ecx, -12(%ebp)
+	movl	$0, %ecx
+	movl	%ecx, -16(%ebp)
+	movl	$0, %ecx
+	movl	%ecx, (%ebp)
+	jmp	.BB1.4
+.BB1.4:
+	movl	(%ebp), %ebx
+	movl	$100, %ecx
+	cmp	%ecx, %ebx
+	jnl	.BB1.5
+	jl	.BB1.2
+.BB1.2:
+	movl	(%ebp), %eax
+	xor	%edx, %edx
+	movl	$2, %ebx
+	idiv	%ebx
+
+	movl	%edx, -4(%ebp)
+	jmp	.BB1.3
+.BB1.3:
+	movl	(%ebp), %ecx
+	movl	%ecx, -20(%ebp)
+	movl	$1, %ecx
+	addl	(%ebp), %ecx
+	movl	%ecx, (%ebp)
+	jmp	.BB1.4
+.BB1.5:
+	leave
+	ret

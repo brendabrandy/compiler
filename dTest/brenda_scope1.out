@@ -1,0 +1,23 @@
+a is defined at pTest/scope1.c:1 [in global scope starting at pTest/scope1.c:1] as a
+variable with stgclass extern of type:
+  int
+f is defined at pTest/scope1.c:3 [in global scope starting at pTest/scope1.c:1] as a 
+extern  function returning
+  int
+ and taking the following arugments
+  void
+a is defined at pTest/scope1.c:5 [in function scope starting at pTest/scope1.c:4] as a
+variable with stgclass auto of type:
+  int
+a is defined at pTest/scope1.c:7 [in block scope starting at pTest/scope1.c:6] as a
+variable with stgclass auto of type:
+  int
+b is defined at pTest/scope1.c:8 [in block scope starting at pTest/scope1.c:6] as a
+variable with stgclass auto of type:
+  int
+b is defined at pTest/scope1.c:10 [in function scope starting at pTest/scope1.c:4] as a
+variable with stgclass auto of type:
+  int
+b is defined at pTest/scope1.c:13 [in global scope starting at pTest/scope1.c:1] as a
+variable with stgclass extern of type:
+  int

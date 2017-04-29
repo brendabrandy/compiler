@@ -1,0 +1,84 @@
+c is defined at Brenda_QuadGenTest/test.c:1 [in global scope starting at Brenda_QuadGenTest/test.c:1] as a 
+wrong  function returning
+  int
+ and taking unknown arugments
+a is defined at Brenda_QuadGenTest/test.c:2 [in function scope starting at Brenda_QuadGenTest/test.c:2] as a
+variable with stgclass auto of type:
+  int
+b is defined at Brenda_QuadGenTest/test.c:2 [in function scope starting at Brenda_QuadGenTest/test.c:2] as a
+variable with stgclass auto of type:
+  pointer to
+arr is defined at Brenda_QuadGenTest/test.c:3 [in function scope starting at Brenda_QuadGenTest/test.c:2] as a
+variable with stgclass auto of type:
+   (0x13069e0) array of 10 elements of type
+    array of unknown elements of type
+      int
+AST Dump for function c
+LIST(
+ ASSIGNMENT
+  stab_var name=b def @Brenda_QuadGenTest/test.c:2
+  UNARY OP ADDRESSOF
+   DEREF
+    stab_var name=arr def @Brenda_QuadGenTest/test.c:3
+ ASSIGNMENT
+  DEREF
+   stab_var name=b def @Brenda_QuadGenTest/test.c:2
+  BINARY OP +
+   stab_var name=a def @Brenda_QuadGenTest/test.c:2
+   CONSTANT: (type=int) 4
+ RETURN:
+)
+.BB1.1:
+	%T00001 = LEA	arr{lvar}
+	b{lvar} = MOV	%T00001
+	%T00002 = ADD	a{lvar}	,4
+	STORE	[%T00002]	,b{lvar}
+	RETURN
+h is defined at Brenda_QuadGenTest/test.c:9 [in global scope starting at Brenda_QuadGenTest/test.c:1] as a 
+wrong  function returning
+  int
+ and taking unknown arugments
+d is defined at Brenda_QuadGenTest/test.c:10 [in function scope starting at Brenda_QuadGenTest/test.c:10] as a
+variable with stgclass auto of type:
+   (0x130c720) array of 10 elements of type
+     (0x130c770) array of 20 elements of type
+      array of unknown elements of type
+        int
+i is defined at Brenda_QuadGenTest/test.c:10 [in function scope starting at Brenda_QuadGenTest/test.c:10] as a
+variable with stgclass auto of type:
+  int
+j is defined at Brenda_QuadGenTest/test.c:10 [in function scope starting at Brenda_QuadGenTest/test.c:10] as a
+variable with stgclass auto of type:
+  int
+k is defined at Brenda_QuadGenTest/test.c:10 [in function scope starting at Brenda_QuadGenTest/test.c:10] as a
+variable with stgclass auto of type:
+  int
+v is defined at Brenda_QuadGenTest/test.c:10 [in function scope starting at Brenda_QuadGenTest/test.c:10] as a
+variable with stgclass auto of type:
+  int
+AST Dump for function h
+LIST(
+ ASSIGNMENT
+  stab_var name=v def @Brenda_QuadGenTest/test.c:10
+  DEREF
+   BINARY OP +
+    DEREF
+     BINARY OP +
+      DEREF
+       BINARY OP +
+        stab_var name=d def @Brenda_QuadGenTest/test.c:10
+        stab_var name=i def @Brenda_QuadGenTest/test.c:10
+      stab_var name=j def @Brenda_QuadGenTest/test.c:10
+    stab_var name=k def @Brenda_QuadGenTest/test.c:10
+ RETURN:
+)
+.BB2.1:
+	%T00003 = LEA	d{lvar}
+	%T00004 = MUL	0	,i{lvar}
+	%T00005 = ADD	%T00003	,%T00004
+	%T00006 = MUL	0	,j{lvar}
+	%T00007 = ADD	%T00005	,%T00006
+	%T00008 = MUL	4	,k{lvar}
+	%T00009 = ADD	%T00007	,%T00008
+	v{lvar} = LOAD	[%T00009]
+	RETURN

@@ -1,0 +1,31 @@
+	.comm	a,4,4
+	.text
+	.globl	z
+	.type	z,@function
+z:
+	pushl	%ebp
+	movl	%esp, %ebp
+	subl	$8, %esp
+	subl	$0, %esp
+	subl	$8, %esp
+.BB1.1:
+	movl	$1, %ecx
+	addl	a, %ecx
+	movl	%ecx, a
+	leave
+	ret
+	.text
+	.globl	main
+	.type	main,@function
+main:
+	pushl	%ebp
+	movl	%esp, %ebp
+	subl	$8, %esp
+	subl	$0, %esp
+	subl	$8, %esp
+.BB2.1:
+	movl	$10, %ecx
+	movl	%ecx, a
+	movl	$0, %eax
+	leave
+	ret

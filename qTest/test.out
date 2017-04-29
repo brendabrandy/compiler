@@ -1,0 +1,54 @@
+	.text
+	.globl	c
+	.type	c,@function
+c:
+	pushl	%ebp
+	movl	%esp, %ebp
+	subl	$8, %esp
+	subl	$8, %esp
+.BB1.1:
+	leal	-8(%ebp), -8(%ebp)
+	movl	-8(%ebp), %ecx
+	movl	%ecx, -4(%ebp)
+	movl	$4, %ecx
+	addl	(%ebp), %ecx
+	movl	%ecx, -12(%ebp)
+	leal	-4(%ebp), %ecx
+	movl	-12(%ebp), %ebx
+	movl	%ebx, (%ecx)
+	leave
+	ret
+	.text
+	.globl	h
+	.type	h,@function
+h:
+	pushl	%ebp
+	movl	%esp, %ebp
+	subl	$8, %esp
+	subl	$16, %esp
+	subl	$8, %esp
+.BB2.1:
+	leal	(%ebp), -16(%ebp)
+	movl	(%ebp), %ecx
+	imull	$0, %ecx
+	movl	%ecx, -20(%ebp)
+	movl	-20(%ebp), %ecx
+	addl	-16(%ebp), %ecx
+	movl	%ecx, -24(%ebp)
+	movl	-4(%ebp), %ecx
+	imull	$0, %ecx
+	movl	%ecx, -28(%ebp)
+	movl	-28(%ebp), %ecx
+	addl	-24(%ebp), %ecx
+	movl	%ecx, -32(%ebp)
+	movl	-8(%ebp), %ecx
+	imull	$4, %ecx
+	movl	%ecx, -36(%ebp)
+	movl	-36(%ebp), %ecx
+	addl	-32(%ebp), %ecx
+	movl	%ecx, -40(%ebp)
+	leal	-40(%ebp), %ecx
+	movl	(%ecx), %ebx
+	movl	%ebx, -12(%ebp)
+	leave
+	ret

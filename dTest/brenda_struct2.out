@@ -1,0 +1,52 @@
+struct s1 definition at pTest/struct2.c:4{
+a is defined at pTest/struct2.c:5 [in struct/union scope starting at pTest/struct2.c:4] as a
+field of struct s1 off=0 bit_off=0 bit_wid=0, type:
+  int
+} (size==0)
+
+f is defined at pTest/struct2.c:9 [in global scope starting at pTest/struct2.c:1] as a 
+extern  function returning
+  void
+ and taking unknown arugments
+struct s2 definition at pTest/struct2.c:11{
+p1 is defined at pTest/struct2.c:12 [in struct/union scope starting at pTest/struct2.c:11] as a
+field of struct s2 off=0 bit_off=0 bit_wid=0, type:
+  pointer to
+    struct s1(incomplete)
+} (size==0)
+
+s2 is defined at pTest/struct2.c:13 [in function scope starting at pTest/struct2.c:9] as a
+variable with stgclass auto of type:
+  struct s2(defined at pTest/struct2.c:11)
+struct s1 definition at pTest/struct2.c:16{
+d is defined at pTest/struct2.c:17 [in struct/union scope starting at pTest/struct2.c:16] as a
+field of struct s1 off=0 bit_off=0 bit_wid=0, type:
+  double
+} (size==0)
+
+struct s3 definition at pTest/struct2.c:14{
+p2 is defined at pTest/struct2.c:15 [in struct/union scope starting at pTest/struct2.c:14] as a
+field of struct s3 off=0 bit_off=0 bit_wid=0, type:
+  pointer to
+    struct s2(defined at pTest/struct2.c:11)
+p1 is defined at pTest/struct2.c:18 [in struct/union scope starting at pTest/struct2.c:14] as a
+field of struct s3 off=0 bit_off=0 bit_wid=0, type:
+  pointer to
+    struct s1(defined at pTest/struct2.c:16)
+} (size==0)
+
+s3 is defined at pTest/struct2.c:19 [in function scope starting at pTest/struct2.c:9] as a
+variable with stgclass auto of type:
+  struct s3(defined at pTest/struct2.c:14)
+struct s1 definition at pTest/struct2.c:21{
+f is defined at pTest/struct2.c:22 [in struct/union scope starting at pTest/struct2.c:21] as a
+field of struct s1 off=0 bit_off=0 bit_wid=0, type:
+  float
+} (size==0)
+
+s1 is defined at pTest/struct2.c:23 [in block scope starting at pTest/struct2.c:20] as a
+variable with stgclass auto of type:
+  struct s1(defined at pTest/struct2.c:21)
+s1 is defined at pTest/struct2.c:26 [in function scope starting at pTest/struct2.c:9] as a
+variable with stgclass auto of type:
+  struct s1(defined at pTest/struct2.c:16)

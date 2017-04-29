@@ -1,0 +1,31 @@
+	.comm	a,0,0
+	.text
+	.globl	f
+	.type	f,@function
+f:
+	pushl	%ebp
+	movl	%esp, %ebp
+	subl	$8, %esp
+	subl	$8, %esp
+.BB1.1:
+	leal	a, -8(%ebp)
+	movl	$3, %ecx
+	imull	$4, %ecx
+	movl	%ecx, -12(%ebp)
+	movl	-12(%ebp), %ecx
+	addl	-8(%ebp), %ecx
+	movl	%ecx, -16(%ebp)
+	leal	-16(%ebp), %ecx
+	movl	(%ecx), %ebx
+	movl	%ebx, (%ebp)
+	leal	a, -20(%ebp)
+	movl	$5, %ecx
+	imull	$4, %ecx
+	movl	%ecx, -24(%ebp)
+	movl	-24(%ebp), %ecx
+	addl	-20(%ebp), %ecx
+	movl	%ecx, -28(%ebp)
+	movl	-28(%ebp), %ecx
+	movl	%ecx, -4(%ebp)
+	leave
+	ret

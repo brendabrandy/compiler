@@ -251,6 +251,16 @@ bitwise_xor_expr conditional_body
 	arr_decl:     direct_decl '[' ']'	        {$$ = ast_new_ary(0);
                                                  $$ = add_type_node($1,$$);}
 	            | direct_decl '[' NUMBER ']'	{$$ = ast_new_ary($3.number);
+                                                 fprintf(stderr,"ary number is %llu\n", $3.number);
+                                                 struct node* n = $$;
+                                                 while (n != NULL){
+                                                    if (n->flag == T_ARY_NODE){
+                                                    fprintf(stderr,"type is %d\n", $$->flag);
+                                                        n = n->ast_node.ary_node.type;
+                                                    }else{
+                                                    n = n->next;
+                                                    }
+                                                 }
                                                  $$ = add_type_node($1, $$);}
 	            ;	
 	

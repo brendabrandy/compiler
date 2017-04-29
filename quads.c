@@ -18,6 +18,7 @@
 // ternary operators
 // handling structs / unions
 extern int show_quads;
+extern int show_targetcode;
 extern int stack_offset;
 struct node* head_temp;
 
@@ -26,17 +27,17 @@ void generate_quads(struct node* stmt, int scope, struct node* ident){
     if (scope != S_FUNCTION){
         return;
     }
-	inst_txt_directive();
-	inst_func_directive(ident->ast_node.fn_node.node.name);
-	inst_label(ident->ast_node.fn_node.node.name);
-	inst_func_prologue();	
+    if (show_targetcode == 1){
+    	inst_txt_directive();
+	    inst_func_directive(ident->ast_node.fn_node.node.name);
+	    inst_label(ident->ast_node.fn_node.node.name);
+	    inst_func_prologue();	
+    }
     bb_counter = 0;
     cur_bb = new_bb();
     head_bb = cur_bb;
     gen_quads(stmt, NULL, NULL);
-    if (show_quads == 1){
-        print_bb(head_bb);
-    }
+    print_bb(head_bb);
 }
 
 void gen_quads(struct node* stmt, struct bblock* break_node, struct bblock* cont_node){
@@ -480,11 +481,13 @@ struct node*  gen_rvalue(struct node* node,struct node* target){
             return target;
         }
 		if ((r_type->flag == E_CONSTANT || r_type->flag == T_SCALAR_NODE) && (l_type->flag == T_ARY_NODE || l_type->flag == T_PTR_NODE)){
-			if (l_type->flag == T_ARY_NODE)
+			if (l_type->flag == T_ARY_NODE){
+                fprintf(stderr,"I am an array %d\n", l_type->ast_node.ary_node.ary_size);
 				ary_size = find_size(l_type->ast_node.ary_node.type);
+            }
 			else
 				ary_size = find_size(l_type->ast_node.ptr_node.ptr_to_node);
-			
+		    fprintf(stderr,"array size is %d\n", ary_size);	
 			ar_size_node = ast_new_const(ary_size);
 			temper = new_temporary();
 			emit(E_MUL, ar_size_node, right, temper);
@@ -657,7 +660,8 @@ void print_bb(struct bblock* bb){
         if (my_bb->visited != 1){
             my_bb->visited = 1;
 			sprintf(bname, ".BB%d.%d", my_bb->fn_count, my_bb->bb_count);
-            fprintf(stderr,"%s:\n", bname);
+            if (show_quads == 1)
+                fprintf(stderr,"%s:\n", bname);
 			inst_label(bname);
             while(my_quad != NULL){
 			    if (my_quad->opcode >= QUAD_BRLT && my_quad->opcode <= QUAD_BRGE || 
@@ -697,41 +701,51 @@ void print_bb(struct bblock* bb){
 }
 
 struct bblock* print_branch(struct quad* quad, struct bblock* bblock){
-	fprintf(stderr,"\t");
+    if (show_quads == 1)
+	    fprintf(stderr,"\t");
 	switch(quad->opcode){
 		case QUAD_BRLT:	
-			fprintf(stderr,"BRLT");		
+            if (show_quads == 1)
+			    fprintf(stderr,"BRLT");
 			inst_jump(QUAD_BRLT, "jnl", "jl", bblock->f_block, bblock->t_block);
 			break;
         case QUAD_BREQ: 
-			fprintf(stderr,"BREQ");   
+            if (show_quads == 1)
+			    fprintf(stderr,"BREQ");   
 			inst_jump(QUAD_BREQ, "jne", "je", bblock->f_block, bblock->t_block);  
 			break;
         case QUAD_BRNEQ: 
-			fprintf(stderr,"BRNEQ"); 
+            if (show_quads == 1)
+			    fprintf(stderr,"BRNEQ"); 
 			inst_jump(QUAD_BRNEQ, "je", "jne", bblock->f_block, bblock->t_block);  
 			break;
         case QUAD_BRGT: 
-			fprintf(stderr,"BRGT");
+            if (show_quads == 1)
+			    fprintf(stderr,"BRGT");
 			inst_jump(QUAD_BRGT, "jng", "jg", bblock->f_block, bblock->t_block);     
 			break;
         case QUAD_BRLE: 
-			fprintf(stderr,"BRLE");
+            if (show_quads == 1)
+			    fprintf(stderr,"BRLE");
 			inst_jump(QUAD_BRLE, "jnle", "jle", bblock->f_block, bblock->t_block); 
 			break;
         case QUAD_BRGE: 
-			fprintf(stderr,"BRGE"); 
+            if (show_quads == 1)
+			    fprintf(stderr,"BRGE"); 
 			inst_jump(QUAD_BRGE, "jnge", "jge", bblock->f_block , bblock->t_block);
 			break;
         case QUAD_BR:   
-			fprintf(stderr,"BR");
+            if (show_quads == 1)
+			    fprintf(stderr,"BR");
 			inst_jump(QUAD_BR, "jmp", NULL, bblock->s_block, NULL);       
 			break;
 	}
-	fprintf(stderr,"\t");
+    if (show_quads == 1)
+	    fprintf(stderr,"\t");
     if (quad->opcode >= QUAD_BRLT && quad->opcode <= QUAD_BRGE){
-    	fprintf(stderr,".BB%d.%d, .BB%d.%d\n", bblock->f_block->fn_count, bblock->f_block->bb_count,
-                                         bblock->t_block->fn_count, bblock->t_block->bb_count);
+        if (show_quads == 1)
+    	    fprintf(stderr,".BB%d.%d, .BB%d.%d\n", bblock->f_block->fn_count, bblock->f_block->bb_count,
+                                             bblock->t_block->fn_count, bblock->t_block->bb_count);
         if (bblock->t_block->visited == 0){
             print_bb(bblock->t_block);
         }
@@ -740,7 +754,8 @@ struct bblock* print_branch(struct quad* quad, struct bblock* bblock){
         }
         return bblock->t_block->s_block;
     }else{
-        fprintf(stderr,".BB%d.%d\n", bblock->s_block->fn_count, bblock->s_block->bb_count);
+        if (show_quads == 1)
+            fprintf(stderr,".BB%d.%d\n", bblock->s_block->fn_count, bblock->s_block->bb_count);
         return bblock->s_block;
     }
 }
@@ -748,95 +763,109 @@ struct bblock* print_branch(struct quad* quad, struct bblock* bblock){
 // print quads
 void print_quad(struct quad* curr_quad){
     // 1. res
-    if (curr_quad->result != NULL){
-        fprintf(stderr,"\t");
-        print_node(curr_quad->result);
-        fprintf(stderr," = ");
-    }else{
-        fprintf(stderr,"\t");
+    if (show_quads == 1){
+        if (curr_quad->result != NULL){
+            fprintf(stderr,"\t");
+            print_node(curr_quad->result);
+            fprintf(stderr," = ");
+        }else{
+            fprintf(stderr,"\t");
+        }
     }
     // 2. opcode
     switch(curr_quad->opcode){
-        case E_ADD: 
-            fprintf(stderr, "ADD");
+        case E_ADD:
+            if (show_quads == 1) 
+                fprintf(stderr, "ADD");
             inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);             break;
-        case E_MINUS: 
-            fprintf(stderr,"MINUS");    
+        case E_MINUS:
+            if (show_quads == 1) 
+                fprintf(stderr,"MINUS");    
             inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
             break;
         case E_MUL: 
-			fprintf(stderr,"MUL");
+            if (show_quads == 1)
+			    fprintf(stderr,"MUL");
 			inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
 			break;
-        case E_DIV: 
-            fprintf(stderr,"DIV");
+        case E_DIV:
+            if (show_quads == 1) 
+                fprintf(stderr,"DIV");
             inst_division(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
             break;
-        case E_MOD: 
-            fprintf(stderr,"MOD");
+        case E_MOD:
+            if (show_quads == 1) 
+                fprintf(stderr,"MOD");
             inst_division(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
             break;
         case E_SHL: 
-            fprintf(stderr,"SHL");  
+            if (show_quads == 1)
+                fprintf(stderr,"SHL");  
             inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
             break;
-        case E_SHR: 
-            fprintf(stderr,"SHR");
+        case E_SHR:
+            if (show_quads == 1) 
+                fprintf(stderr,"SHR");
             inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
             break;
-        /*case E_LT:  fprintf(stderr,"LT");         break;
-        case E_GT:  fprintf(stderr,"GT");         break;
-        case E_LTEQ: fprintf(stderr,"LTEQ");      break;
-        case E_EQEQ: fprintf(stderr,"EQEQ");      break;
-        case E_NOTEQ: fprintf(stderr,"NOTEQ");    break;
-        case E_LOGOR: fprintf(stderr,"LOGOR");    break;
-        case E_LOGAND: fprintf(stderr,"LOGAND");  break;*/
-        case E_XOR: 
-            fprintf(stderr,"XOR");    
+        case E_XOR:
+            if (show_quads == 1) 
+                fprintf(stderr,"XOR");    
             inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
             break;
-        case E_AND: 
-            fprintf(stderr,"AND");
+        case E_AND:
+            if (show_quads == 1) 
+                fprintf(stderr,"AND");
             inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
             break;
-        case E_OR: 
-            fprintf(stderr,"OR");
+        case E_OR:
+            if (show_quads == 1) 
+                fprintf(stderr,"OR");
             inst_two_operands(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
             break;
         case E_BITNOT: 
-            fprintf(stderr,"BNOT");
+            if (show_quads == 1)
+                fprintf(stderr,"BNOT");
             inst_one_operand(curr_quad->opcode, curr_quad->result, curr_quad->src1);
             break;
         case E_UMINUS:
-            fprintf(stderr,"UMIN");
+            if (show_quads == 1)
+                fprintf(stderr,"UMIN");
             inst_one_operand(curr_quad->opcode, curr_quad->result, curr_quad->src1);
             break;
         case E_UPLUS: 
-            fprintf(stderr,"UPLUS"); 
+            if (show_quads == 1)
+                fprintf(stderr,"UPLUS"); 
             inst_mov(curr_quad->opcode, curr_quad->result, curr_quad->src1);   
             break;
         case QUAD_LOAD: 
-			fprintf(stderr,"LOAD");
+			if (show_quads == 1)
+                fprintf(stderr,"LOAD");
 			access_mem(curr_quad->opcode, curr_quad->src1, curr_quad->result);
 			break;
         case QUAD_STORE: 
-			fprintf(stderr,"STORE"); 
+			if (show_quads == 1)
+                fprintf(stderr,"STORE"); 
 			access_mem(curr_quad->opcode, curr_quad->src2, curr_quad->src1);
 			break;
         case QUAD_LEA: 
-			fprintf(stderr,"LEA");
+            if (show_quads == 1)
+			    fprintf(stderr,"LEA");
 			access_mem(curr_quad->opcode, curr_quad->src1, curr_quad->result);
 			break;
         case QUAD_MOV:
-            fprintf(stderr,"MOV");
+            if (show_quads == 1)
+                fprintf(stderr,"MOV");
             inst_mov(curr_quad->opcode, curr_quad->result, curr_quad->src1);
             break;
         case QUAD_CMP: 
-            fprintf(stderr,"CMP");
+            if (show_quads == 1)
+                fprintf(stderr,"CMP");
             inst_cmp(curr_quad->src1, curr_quad->src2);
             break;
         case QUAD_RETURN: 
-			fprintf(stderr,"RETURN");
+            if (show_quads == 1)
+			    fprintf(stderr,"RETURN");
 			if (curr_quad->src1 == NULL){
                 inst_return(NULL);
             }else{
@@ -844,33 +873,38 @@ void print_quad(struct quad* curr_quad){
             }
 			break;
 		case QUAD_CALL:	
-            fprintf(stderr,"CALL");	
+            if (show_quads == 1)
+                fprintf(stderr,"CALL");	
             inst_fn_call(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);  
             break;
 		case QUAD_ARGS: 
-			fprintf(stderr,"ARG");	  
+            if (show_quads == 1)
+			    fprintf(stderr,"ARG");	  
 			inst_fn_call(curr_quad->opcode, curr_quad->result, curr_quad->src1, curr_quad->src2);
 			break;
         case QUAD_NOT:  
-            fprintf(stderr,"NOT");
+            if (show_quads == 1)
+                fprintf(stderr,"NOT");
             inst_not_operator(curr_quad->result, curr_quad->src1);
             break;
     }
-    if (curr_quad->src1 != NULL){
-		if (curr_quad->opcode == QUAD_LOAD || curr_quad->opcode == QUAD_STORE){
-			fprintf(stderr,"\t[");
-			print_node(curr_quad->src1);
-			fprintf(stderr,"]");
-		}else{
-        	fprintf(stderr,"\t");
-        	print_node(curr_quad->src1);
-		}
+    if (show_quads == 1){
+        if (curr_quad->src1 != NULL){
+		    if (curr_quad->opcode == QUAD_LOAD || curr_quad->opcode == QUAD_STORE){
+			    fprintf(stderr,"\t[");
+    			print_node(curr_quad->src1);
+	    		fprintf(stderr,"]");
+		    }else{
+        	    fprintf(stderr,"\t");
+            	print_node(curr_quad->src1);
+	    	}
+        }
+        if (curr_quad->src2 != NULL){
+            fprintf(stderr,"\t,");
+            print_node(curr_quad->src2);
+        }
+        fprintf(stderr,"\n");
     }
-    if (curr_quad->src2 != NULL){
-        fprintf(stderr,"\t,");
-        print_node(curr_quad->src2);
-    }
-    fprintf(stderr,"\n");
 }
 
 void print_node(struct node* my_node){
@@ -908,6 +942,7 @@ int find_size(struct node* node){
     if (node->flag == I_VAR_NODE){
         return find_size(node->next);
     }else if (node->flag == T_ARY_NODE){
+        fprintf(stderr,"size of array is %d\n", node->ast_node.ary_node.ary_size);
         return node->ast_node.ary_node.ary_size*find_size(node->ast_node.ary_node.type);
     }else if (node->flag == T_PTR_NODE){
         return find_size(node->ast_node.ptr_node.ptr_to_node);
